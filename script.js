@@ -1,3 +1,8 @@
+const brandStyles = document.createElement("link");
+brandStyles.rel = "stylesheet";
+brandStyles.href = "brand.css";
+document.head.appendChild(brandStyles);
+
 const toggle = document.querySelector(".menu-toggle");
 const nav = document.querySelector(".main-nav");
 
