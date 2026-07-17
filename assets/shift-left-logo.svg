@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" role="img" aria-labelledby="title desc">
+<title id="title">Shift Left Coaching logo</title>
+<desc id="desc">Two human figures form a green and blue infinity loop with arrows showing movement from right to left.</desc>
+<defs>
+  <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#58c72e"/></marker>
+  <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#168dcc"/></marker>
+</defs>
+<path d="M115 170C205 45 300 78 385 166C470 254 570 290 655 168" fill="none" stroke="#58c72e" stroke-width="42" stroke-linecap="round"/>
+<path d="M645 170C555 45 460 78 375 166C290 254 190 290 105 168" fill="none" stroke="#168dcc" stroke-width="42" stroke-linecap="round"/>
+<path d="M593 102C535 62 458 81 397 139" fill="none" stroke="#168dcc" stroke-width="16" stroke-linecap="round" marker-end="url(#arrowBlue)"/>
+<path d="M168 230C226 269 302 250 363 192" fill="none" stroke="#58c72e" stroke-width="16" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+<circle cx="93" cy="118" r="41" fill="#58c72e"/><circle cx="667" cy="220" r="41" fill="#168dcc"/>
+<path d="M78 113q15 18 30 0M650 224q17 14 31-2" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+<circle cx="82" cy="103" r="3.5" fill="white"/><circle cx="101" cy="103" r="3.5" fill="white"/><circle cx="656" cy="210" r="3.5" fill="white"/><circle cx="676" cy="210" r="3.5" fill="white"/>
+<text x="380" y="170" text-anchor="middle" font-family="Georgia,serif" font-size="42" font-style="italic" fill="#173537" transform="rotate(-12 380 170)">Shift Left Coaching</text>
+</svg>
