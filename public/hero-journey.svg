@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" role="img" aria-labelledby="title desc">
+<title id="title">Shift Left journey illustration</title>
+<desc id="desc">Green and blue flowing paths with two people connecting and arrows showing proactive movement.</desc>
+<defs>
+  <linearGradient id="greenWave" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9ddc58" stop-opacity=".25"/><stop offset=".45" stop-color="#57c925"/><stop offset="1" stop-color="#2f9137"/></linearGradient>
+  <linearGradient id="blueWave" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8ad5ef" stop-opacity=".15"/><stop offset=".42" stop-color="#188fd0"/><stop offset="1" stop-color="#0b5aa0"/></linearGradient>
+  <marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto"><path d="M0 0 10 5 0 10z" fill="#2f9137"/></marker>
+  <marker id="ba" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto"><path d="M0 0 10 5 0 10z" fill="#0b6fbd"/></marker>
+</defs>
+<path d="M0 258C180 336 300 118 510 202C690 274 782 355 1004 226C1170 130 1275 214 1400 180" fill="none" stroke="url(#greenWave)" stroke-width="34" stroke-linecap="round"/>
+<path d="M0 310C218 390 338 176 548 252C733 319 815 332 1018 248C1208 170 1286 302 1400 250" fill="none" stroke="url(#blueWave)" stroke-width="40" stroke-linecap="round"/>
+<path d="M605 230C680 257 747 271 817 251" fill="none" stroke="#2f9137" stroke-width="13" stroke-linecap="round" marker-end="url(#ga)"/>
+<path d="M867 247C952 218 1011 185 1080 180" fill="none" stroke="#0b6fbd" stroke-width="13" stroke-linecap="round" marker-end="url(#ba)"/>
+<g transform="translate(772 141)"><circle cx="0" cy="0" r="13" fill="#57c925"/><path d="M0 16v47m0-30-22 29m22-24 25 11m-25 14-18 33m18-33 21 34" fill="none" stroke="#57c925" stroke-width="11" stroke-linecap="round"/></g>
+<g transform="translate(847 147)"><circle cx="0" cy="0" r="13" fill="#188fd0"/><path d="M0 16v47m0-30-20 18m20-15 22 27m-22 0-19 34m19-34 22 32" fill="none" stroke="#188fd0" stroke-width="11" stroke-linecap="round"/></g>
+<path d="M797 187C812 177 828 178 842 188" fill="none" stroke="#173537" stroke-width="7" stroke-linecap="round"/>
+<g fill="#2f9137"><path d="M1215 202c22-43 41-60 60-72-2 30-15 54-60 72z"/><path d="M1245 219c30-30 59-39 83-40-13 25-35 39-83 40z"/></g>
+<g fill="#188fd0"><path d="M1288 211c20-46 37-65 58-77-1 31-14 57-58 77z"/><path d="M1323 233c25-31 52-43 77-45-9 27-29 43-77 45z"/></g>
+</svg>
