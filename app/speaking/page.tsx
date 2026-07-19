@@ -1,0 +1,18 @@
+import Link from "next/link";
+
+const topics = [
+  ["Role of Ego and Empathy", "How ego can block understanding, how empathy strengthens connection, and how leaders can balance both to build inclusive, collaborative cultures."],
+  ["Breaking the Stigma Around Mental Health", "A personal and practical conversation about creating safer spaces, reducing stereotypes, and making support easier to seek."],
+  ["Why Mental Health Matters", "A clear exploration of how mental health affects relationships, work, physical wellbeing, decision-making, and quality of life."],
+  ["IT Industry Concepts Applied to Mental Fitness", "How shifting left, agile thinking, feedback loops, root-cause analysis, and continuous improvement can make wellbeing more relatable to logical minds."],
+  ["Mind Fitness Through IT Strategies", "A signature session for technology professionals who value mental fitness but struggle to connect with traditional wellbeing approaches."],
+  ["Resilience Through Change and Career Disruption", "Lessons from relocation, leadership, layoffs, rebuilding, and learning to turn disruption into reflection, growth, and forward movement."],
+];
+
+export default function SpeakingPage(){return <main>
+<section className="speakingHero"><p className="eyebrow">KEYNOTES · WORKSHOPS · CONVERSATIONS</p><h1>Make wellbeing practical, relatable, and actionable.</h1><p className="lead">Bharath Kumar Arekapudi brings a rare combination of technology leadership, lived experience, storytelling, and proactive mental-fitness strategy to organizations, schools, universities, and communities.</p><div className="actions"><a className="button primary" href="mailto:info@shiftleftcc.com?subject=Speaking inquiry">Invite Bharath to speak</a><Link className="button secondary" href="/my-story">Meet Bharath</Link></div></section>
+<section className="speakerStatement"><blockquote>“We should not wait for a crisis to begin building the skills that help us navigate one.”</blockquote><p>Sessions can be delivered as 30- or 60-minute talks, keynotes, facilitated conversations, or customized workshops.</p></section>
+<section className="topicSection"><div className="sectionHeading"><p className="eyebrow">SIGNATURE TOPICS</p><h2>Conversations designed for real people and real systems.</h2></div><div className="topicGrid">{topics.map(([title,copy])=><article key={title}><h3>{title}</h3><p>{copy}</p><span>Customized to your audience →</span></article>)}</div></section>
+<section className="audienceBand"><p className="eyebrow">AUDIENCES</p><div><span>Technology teams</span><span>Corporate leaders</span><span>Schools</span><span>Universities</span><span>Nonprofits</span><span>Community organizations</span></div></section>
+<section className="contact" id="speaker-contact"><div><p className="eyebrow">BOOK A SPEAKING ENGAGEMENT</p><h2>Bring the Shift Left conversation to your audience.</h2><p>Share your audience, event, goals, preferred topic, and timing. The session can be tailored to your organization’s needs.</p><a href="mailto:info@shiftleftcc.com">info@shiftleftcc.com</a><p>+1 (425) 409-7529</p></div><form action="mailto:info@shiftleftcc.com" method="post" encType="text/plain"><label>Name<input name="name" required /></label><label>Email<input type="email" name="email" required /></label><label>Organization<input name="organization" required /></label><label>What would you like Bharath to speak about?<textarea name="message" rows={5} required /></label><button className="button primary" type="submit">Send speaking inquiry</button></form></section>
+</main>}
