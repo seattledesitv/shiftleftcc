@@ -1,17 +1,17 @@
 import Link from "next/link";
 
 const posts = [
-  { tag: "SHIFT LEFT", title: "Why wellbeing support should begin before a crisis", excerpt: "A practical introduction to noticing earlier, preparing earlier, and creating support before challenges intensify." },
-  { tag: "FAMILY", title: "How to spark conversations with teens", excerpt: "Simple ways to replace interrogation with curiosity and create safer openings for honest parent–teen conversations." },
-  { tag: "LEADERSHIP", title: "Awareness, empowerment, and action at work", excerpt: "How leaders can build a culture where people speak earlier, ask for help sooner, and take meaningful action." },
-  { tag: "PERSONAL GROWTH", title: "The difference between reacting and responding", excerpt: "A reflection on emotional awareness, choice, and the small pause that can change what happens next." },
-  { tag: "COMMUNITY", title: "Wellbeing grows through connection", excerpt: "Why empathy, belonging, and community support are essential parts of sustainable mental wellness." },
-  { tag: "RESILIENCE", title: "Building tools before you need them", excerpt: "Practical strategies become most useful when they are learned, practiced, and normalized ahead of difficult moments." },
+  { tag: "MIND FITNESS", title: "Mind Fitness Through IT Strategies for Logical Minds", excerpt: "How systems thinking, shifting left, feedback loops, and preventive maintenance can make wellbeing more relatable to technology professionals.", href: "/journal/mind-fitness-through-it-strategies", featured: true },
+  { tag: "SHIFT LEFT", title: "The Power of Shift Left Coaching in Promoting Mental Health and Wellbeing", excerpt: "A foundational introduction to early intervention, preventive care, resilience, and proactive mental-fitness practices.", href: "/why-shift-left" },
+  { tag: "SELF-AWARENESS", title: "Know Your Thinking Patterns", excerpt: "Learn to notice automatic thoughts, thinking errors, self-talk, core beliefs, and the role mindfulness can play in changing patterns.", href: "mailto:info@shiftleftcc.com?subject=Know Your Thinking Patterns article" },
+  { tag: "SELF-COACHING", title: "How Can You Coach Yourself?", excerpt: "A practical framework for setting goals, asking powerful questions, creating action plans, reflecting, and seeking support when needed.", href: "mailto:info@shiftleftcc.com?subject=Self Coaching article" },
+  { tag: "WELLBEING", title: "Tips for Maintaining Positive Mental Health", excerpt: "Seven practical reminders involving thoughts, gratitude, connection, physical health, stress, rest, and professional support.", href: "mailto:info@shiftleftcc.com?subject=Positive Mental Health article" },
+  { tag: "STATE OF MIND", title: "Maintain a Positive State of Mind", excerpt: "How awareness of changing emotions, external influences, healthy management, and individual values can support physical and emotional health.", href: "mailto:info@shiftleftcc.com?subject=State of Mind article" },
 ];
 
 export default function BlogPage() {
   return <main>
-    <section className="pageHero"><p className="eyebrow">SHIFT LEFT INSIGHTS</p><h1>Ideas that move awareness into action.</h1><p className="lead">Perspectives on wellbeing, family conversations, leadership, resilience, community, and proactive support.</p></section>
-    <section className="contentPage"><div className="contentGrid">{posts.map(post => <article className="contentCard" key={post.title}><span className="tag">{post.tag}</span><h2>{post.title}</h2><p>{post.excerpt}</p><Link href="mailto:info@shiftleftcc.com?subject=Blog topic inquiry">Read more →</Link></article>)}</div></section>
+    <section className="pageHero"><p className="eyebrow">THE SHIFT LEFT JOURNAL</p><h1>Ideas for logical minds and human lives.</h1><p className="lead">Practical perspectives on proactive wellbeing, technology, leadership, resilience, self-awareness, family, and community.</p></section>
+    <section className="contentPage"><div className="contentGrid">{posts.map(post => <article className={`contentCard ${post.featured ? "featuredArticle" : ""}`} key={post.title}><span className="tag">{post.tag}</span><h2>{post.title}</h2><p>{post.excerpt}</p><Link href={post.href}>{post.featured ? "Read the featured article" : "Read more"} →</Link></article>)}</div></section>
   </main>;
 }
