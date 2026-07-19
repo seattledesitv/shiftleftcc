@@ -2,27 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 const offerings = [
-  {
-    number: "01",
-    title: "Individual",
-    heading: "Clarity, confidence, and forward movement.",
-    body: "Personal coaching for transitions, career decisions, emotional wellbeing, purpose, mindset, and sustainable growth.",
-    items: ["Life and wellness coaching", "Career clarity", "Resilience and habits", "Purpose and transitions"],
-  },
-  {
-    number: "02",
-    title: "Family",
-    heading: "Create space for conversations that matter.",
-    body: "Guided support for families who want to connect earlier, listen better, and spark meaningful conversations with teens.",
-    items: ["Sparking teen conversations", "Parent–teen communication", "Family reflection sessions", "Tools for difficult moments"],
-  },
-  {
-    number: "03",
-    title: "Organizations",
-    heading: "Healthier people. Stronger teams. Better systems.",
-    body: "Workshops, coaching, and consulting that strengthen empathy, communication, psychological safety, and resilience.",
-    items: ["Leadership and team coaching", "Mental wellness workshops", "Empathy programs", "Culture consulting"],
-  },
+  { number: "01", title: "Individual", heading: "Clarity, confidence, and forward movement.", body: "Personal coaching for transitions, career decisions, emotional wellbeing, purpose, mindset, and sustainable growth.", items: ["Life and wellness coaching", "Career clarity", "Resilience and habits", "Purpose and transitions"] },
+  { number: "02", title: "Family", heading: "Create space for conversations that matter.", body: "Guided support for families who want to connect earlier, listen better, and spark meaningful conversations with teens.", items: ["Sparking teen conversations", "Parent–teen communication", "Family reflection sessions", "Tools for difficult moments"] },
+  { number: "03", title: "Organizations", heading: "Healthier people. Stronger teams. Better systems.", body: "Workshops, coaching, and consulting that strengthen empathy, communication, psychological safety, and resilience.", items: ["Leadership and team coaching", "Mental wellness workshops", "Empathy programs", "Culture consulting"] },
 ];
 
 const logoDetails = [
@@ -35,66 +17,29 @@ const logoDetails = [
 ];
 
 export default function HomePage() {
-  return (
-    <main>
-      <section className="hero">
-        <div className="heroCopy">
-          <p className="eyebrow">SHIFT LEFT &amp; STAY AHEAD</p>
-          <h1>Wellbeing <em>before</em> challenges become crises<span>.</span></h1>
-          <p className="lead">Practical coaching and consulting that helps individuals, families, leaders, and organizations build awareness, resilience, confidence, and community impact earlier.</p>
-          <div className="actions">
-            <a href="#contact" className="button primary">Book a Discovery Call <span>→</span></a>
-            <a href="#about" className="button secondary">▶ &nbsp; Learn More</a>
-          </div>
-        </div>
-        <div className="heroRight" aria-label="Awareness, empowerment and action">
-          <div className="pillar"><span className="pillarIcon">♡</span><strong>Awareness</strong><p>Build self-awareness and understand what truly matters.</p><i /></div>
-          <div className="pillar"><span className="pillarIcon">◎</span><strong>Empowerment</strong><p>Strengthen mindset, develop skills, and grow resilience.</p><i /></div>
-          <div className="pillar"><span className="pillarIcon">↗</span><strong>Action</strong><p>Take proactive steps today to create a better tomorrow.</p><i /></div>
-        </div>
-        <Image className="heroJourney" src="/hero-journey.svg" alt="Two people connecting on green and blue paths that represent the Shift Left journey" width={1400} height={360} priority />
-      </section>
+  return <main>
+    <section className="hero">
+      <div className="heroCopy"><p className="eyebrow">THE SHIFT LEFT STRATEGY</p><h1>Wellbeing <em>before</em> challenges become crises<span>.</span></h1><p className="lead">Helping people, families, schools, and organizations build the capacity today for a healthier, stronger tomorrow.</p><div className="actions"><Link href="/why-shift-left" className="button primary">Discover the Strategy <span>→</span></Link><Link href="/my-story" className="button secondary">Meet the Founder</Link></div></div>
+      <div className="heroRight" aria-label="The three continuous Shift Left practices">
+        <div className="pillar"><span className="pillarIcon">◉</span><strong>Continuous Awareness</strong><p>Notice patterns, signals, needs, and choices earlier.</p><i /></div>
+        <div className="pillar"><span className="pillarIcon">↻</span><strong>Continuous Learning</strong><p>Use reflection, feedback, and growth to keep adapting.</p><i /></div>
+        <div className="pillar"><span className="pillarIcon">♡</span><strong>Continuous Self-Care</strong><p>Maintain wellbeing intentionally—before repair is required.</p><i /></div>
+      </div>
+      <Image className="heroJourney" src="/hero-journey.svg" alt="Two people connecting on green and blue paths that represent the Shift Left journey" width={1400} height={360} priority />
+    </section>
 
-      <section className="logoStory" id="logo-story">
-        <div className="logoStoryHeader"><p className="eyebrow">WHY THIS LOGO?</p><h2>A visual story of the Shift Left philosophy.</h2><p>The connected green and blue figures form an infinity loop, reflecting continuous growth, human connection, balance, and early action.</p></div>
-        <div className="logoStoryBody">
-          <div className="logoVisual"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting infinity logo with green and blue figures" width={760} height={330} priority /></div>
-          <div className="logoDetailGrid">
-            {logoDetails.map(([kind, title, copy]) => <article key={title}><span className={`storyIcon ${kind}`}>{kind === "infinity" ? "∞" : kind === "shift" ? "←" : kind === "connection" ? "◉" : kind === "balance" ? "◐" : "☺"}</span><h3>{title}</h3><p>{copy}</p></article>)}
-          </div>
-        </div>
-        <div className="brandPromise"><span>❧</span><p><strong>Shift Left Coaching &amp; Consulting</strong> helps individuals, families, schools, businesses, and organizations build the skills and stories today for a <em>healthier, stronger tomorrow.</em></p><div><b>Mind.<small>Be aware.</small></b><b>Heart.<small>Be kind.</small></b><b>Action.<small>Make it happen.</small></b></div></div>
-      </section>
+    <section className="logoStory" id="logo-story"><div className="logoStoryHeader"><p className="eyebrow">WHY THIS LOGO?</p><h2>A visual story of the Shift Left philosophy.</h2><p>The connected green and blue figures form an infinity loop, reflecting continuous growth, human connection, balance, and early action.</p></div><div className="logoStoryBody"><div className="logoVisual"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting infinity logo with green and blue figures" width={760} height={330} priority /></div><div className="logoDetailGrid">{logoDetails.map(([kind, title, copy]) => <article key={title}><span className={`storyIcon ${kind}`}>{kind === "infinity" ? "∞" : kind === "shift" ? "←" : kind === "connection" ? "◉" : kind === "balance" ? "◐" : "☺"}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></div><div className="brandPromise"><span>❧</span><p><strong>Shift Left Coaching &amp; Consulting</strong> helps people and organizations <em>notice earlier, learn continuously, and care intentionally.</em></p><div><b>Notice.<small>Be aware.</small></b><b>Learn.<small>Keep growing.</small></b><b>Care.<small>Maintain wellbeing.</small></b></div></div></section>
 
-      <section className="intro" id="about">
-        <p className="eyebrow">THE SHIFT LEFT PHILOSOPHY</p>
-        <div><h2>Support should begin before the breaking point.</h2><p>We bring the idea of “shifting left” into human wellbeing and practical consulting: noticing earlier, preparing earlier, designing thoughtfully, and acting earlier. The goal is to help people and organizations move forward with greater awareness, choice, confidence, and impact.</p></div>
-      </section>
+    <section className="intro" id="about"><p className="eyebrow">THE SHIFT LEFT PHILOSOPHY</p><div><h2>Support should begin before the breaking point.</h2><p>In engineering, shifting left means identifying and addressing issues earlier. We bring that same proactive thinking into human wellbeing: building awareness, skills, habits, connection, and resilience before challenges intensify.</p></div></section>
 
-      <section className="offerings" id="offerings">
-        <div className="sectionHeading"><p className="eyebrow">HOW WE HELP</p><h2>Support designed around people and the systems around them.</h2></div>
-        <div className="offeringGrid">
-          {offerings.map((offering) => (
-            <article key={offering.title} className={`offeringCard ${offering.title.toLowerCase()}`}>
-              <span className="cardNumber">{offering.number}</span><p className="eyebrow">{offering.title}</p><h3>{offering.heading}</h3><p>{offering.body}</p><ul>{offering.items.map((item) => <li key={item}>{item}</li>)}</ul><a href="#contact">Start a conversation →</a>
-            </article>
-          ))}
-        </div>
-      </section>
+    <section className="founderPreview"><Image src="/bharath-portrait.svg" alt="Bharath Kumar Arekapudi" width={360} height={360} /><div><p className="eyebrow">BUILT BY AN ENGINEER. SHAPED BY LIFE.</p><h2>Meet Bharath Kumar Arekapudi.</h2><p>Technology leader, coach, author, speaker, and community builder. Bharath created the Shift Left Strategy by combining systems thinking with lived resilience and human connection.</p><div className="actions"><Link href="/my-story" className="button primary">Read my story</Link><Link href="/why-me" className="button secondary">Why work with me</Link></div></div></section>
 
-      <section className="consultingTeaser">
-        <p className="eyebrow">SHIFT LEFT CONSULTING</p><h2>Build the idea. Shape the story. Reach the community.</h2><p>Practical packages for websites, media and marketing, product launches, community placement, and book publishing.</p><Link href="/consulting" className="button primary">Explore consulting packages</Link>
-      </section>
+    <section className="offerings" id="offerings"><div className="sectionHeading"><p className="eyebrow">HOW WE HELP</p><h2>Support designed around people and the systems around them.</h2></div><div className="offeringGrid">{offerings.map((offering) => <article key={offering.title} className={`offeringCard ${offering.title.toLowerCase()}`}><span className="cardNumber">{offering.number}</span><p className="eyebrow">{offering.title}</p><h3>{offering.heading}</h3><p>{offering.body}</p><ul>{offering.items.map((item) => <li key={item}>{item}</li>)}</ul><a href="#contact">Start a conversation →</a></article>)}</div></section>
 
-      <section className="contentTeaser">
-        <div><p className="eyebrow">INSIGHTS &amp; RESOURCES</p><h2>Ideas for moving awareness into action.</h2><p>Explore practical perspectives on wellbeing, parenting, communication, leadership, community, marketing, publishing, and the Shift Left approach.</p></div>
-        <div className="contentLinks"><Link href="/blog">Read the blog →</Link><Link href="/resources">Explore resources →</Link></div>
-      </section>
+    <section className="consultingTeaser"><p className="eyebrow">SHIFT LEFT CONSULTING</p><h2>Build the idea. Shape the story. Reach the community.</h2><p>Practical support for digital transformation, websites, AI strategy, media, marketing, community building, product launches, thought leadership, and publishing.</p><Link href="/consulting" className="button primary">Explore consulting</Link></section>
 
-      <section className="contact" id="contact">
-        <div><p className="eyebrow">LET&apos;S CONNECT</p><h2>Your next shift can start with one conversation.</h2><p>Share what you are navigating or building. We will explore whether coaching or consulting is the right fit and identify a practical next step.</p><a href="mailto:info@shiftleftcc.com">info@shiftleftcc.com</a></div>
-        <form action="mailto:info@shiftleftcc.com" method="post" encType="text/plain"><label>Full name<input name="name" required /></label><label>Email<input type="email" name="email" required /></label><label>I am interested in<select name="interest"><option>Individual coaching</option><option>Family coaching</option><option>Organizational coaching</option><option>Website building</option><option>Media and marketing</option><option>Product and community placement</option><option>Book publishing</option><option>Speaking or workshops</option></select></label><label>How can we help?<textarea name="message" rows={4} required /></label><button className="button primary" type="submit">Request a discovery call</button></form>
-      </section>
-    </main>
-  );
+    <section className="contentTeaser"><div><p className="eyebrow">THE SHIFT LEFT JOURNAL</p><h2>Ideas for logical minds and human lives.</h2><p>Explore proactive wellbeing, leadership, family conversations, resilience, technology, and mental fitness through practical frameworks.</p></div><div className="contentLinks"><Link href="/journal/mind-fitness-through-it-strategies">Featured: Mind Fitness Through IT Strategies →</Link><Link href="/blog">Explore the Journal →</Link><Link href="/speaking">Speaking &amp; workshops →</Link></div></section>
+
+    <section className="contact" id="contact"><div><p className="eyebrow">LET&apos;S CONNECT</p><h2>Your next shift can start with one conversation.</h2><p>Share what you are navigating or building. We will explore whether coaching, consulting, or speaking is the right fit and identify a practical next step.</p><a href="mailto:info@shiftleftcc.com">info@shiftleftcc.com</a></div><form action="mailto:info@shiftleftcc.com" method="post" encType="text/plain"><label>Full name<input name="name" required /></label><label>Email<input type="email" name="email" required /></label><label>I am interested in<select name="interest"><option>Individual coaching</option><option>Family coaching</option><option>Organizational coaching</option><option>Consulting services</option><option>Speaking or workshops</option><option>Books and publishing</option></select></label><label>How can we help?<textarea name="message" rows={4} required /></label><button className="button primary" type="submit">Request a discovery call</button></form></section>
+  </main>;
 }
