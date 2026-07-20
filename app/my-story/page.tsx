@@ -13,8 +13,8 @@ const chapters = [
 export default function MyStoryPage() {
   return <main>
     <section className="storyHero">
-      <div><p className="eyebrow">THE STORY OF THE SHIFT LEFT COACH</p><h1>Every strategy begins with a story.</h1><p className="lead">A journey through change, technology, leadership, community, and the belief that support should begin before the breaking point.</p><div className="actions"><Link className="button primary" href="/why-shift-left">Discover the strategy</Link><Link className="button secondary" href="/#contact">Start a conversation</Link></div></div>
-      <figure><Image src="/bharath-portrait.svg" alt="Bharath Kumar Arekapudi" width={520} height={520} priority /><figcaption><strong>Bharath Kumar Arekapudi</strong><span>Founder, Shift Left Coaching &amp; Consulting</span></figcaption></figure>
+      <div><p className="eyebrow">THE STORY OF THE SHIFT LEFT COACH</p><h1>Every strategy begins with a story.</h1><p className="lead">A journey through change, technology, leadership, community, and the belief that support should begin before the breaking point.</p><div className="actions"><Link className="button primary" href="/why-shift-left">Discover the strategy</Link><Link className="button secondary" href="/book">Book a discovery call</Link></div></div>
+      <figure><Image src="/f2ofujurrbr95cdsjtghjkqlu8._SY600_.jpg" alt="Bharath Kumar Arekapudi" width={520} height={520} priority /><figcaption><strong>Bharath Kumar Arekapudi</strong><span>Founder, Shift Left Coaching &amp; Consulting</span></figcaption></figure>
     </section>
     <section className="storyIntro"><p className="eyebrow">FROM EXPERIENCE TO METHOD</p><h2>Resilience was not a concept I studied. It was something life kept asking me to practice.</h2></section>
     <section className="storyTimeline">{chapters.map(([number,title,copy]) => <article key={title}><span>{number}</span><div><h2>{title}</h2><p>{copy}</p></div></article>)}</section>
