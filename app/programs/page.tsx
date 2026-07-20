@@ -54,10 +54,12 @@ export default function ProgramsPage() {
       <div className="actions"><Link href="/book" className="button primary">Book a free discovery call</Link><Link href="/how-it-works" className="button secondary">See how it works</Link></div>
     </section>
 
-    <section className="offerings programCatalog">
+    <section className="audienceBand"><p className="eyebrow">CHOOSE YOUR PATH</p><div><Link href="#individuals">Individuals</Link><Link href="#families">Families</Link><Link href="/organizations">Organizations</Link><Link href="/consulting">Consulting</Link></div></section>
+
+    <section className="offerings programCatalog" id="individuals">
       <div className="sectionHeading"><p className="eyebrow">CURRENT OFFERINGS</p><h2>Start with a focused program. Customize as needed.</h2></div>
       <div className="offeringGrid">
-        {programs.map((program, index) => <article key={program.title} className="offeringCard">
+        {programs.map((program, index) => <article key={program.title} id={program.audience === "Families" ? "families" : undefined} className="offeringCard">
           <span className="cardNumber">{String(index + 1).padStart(2, "0")}</span>
           <p className="eyebrow">{program.audience}</p>
           <h3>{program.title}</h3>
@@ -68,6 +70,8 @@ export default function ProgramsPage() {
         </article>)}
       </div>
     </section>
+
+    <section className="contentTeaser"><div><p className="eyebrow">FOR TEAMS, SCHOOLS &amp; COMMUNITIES</p><h2>Looking for an organizational engagement?</h2><p>Explore workshops, leadership programs, speaking, and customized experiences designed for companies, schools, universities, nonprofits, and community groups.</p></div><div className="contentLinks"><Link href="/organizations">Explore organizational solutions →</Link><Link href="/speaking">Speaking and workshops →</Link><Link href="/book">Discuss a custom engagement →</Link></div></section>
 
     <section className="consultingTeaser">
       <p className="eyebrow">NOT SURE WHERE TO BEGIN?</p>
