@@ -13,7 +13,7 @@ export default function BookPage() {
         <p className="eyebrow">WHAT TO EXPECT</p>
         <h2>A clear, human starting point.</h2>
         <ul>
-          <li>Share the challenge, transition, or opportunity in front of you.</li>
+          <li>Share the challenge, transition, opportunity, or organizational need in front of you.</li>
           <li>Explore whether coaching, consulting, speaking, or a workshop is the best fit.</li>
           <li>Leave with a recommended next step—without pressure to commit.</li>
         </ul>
@@ -26,6 +26,14 @@ export default function BookPage() {
         <label>Full name<input name="name" required /></label>
         <label>Email<input type="email" name="email" required /></label>
         <label>Phone number<input type="tel" name="phone" /></label>
+        <label>I am reaching out for<select name="audience" defaultValue="Myself">
+          <option>Myself</option>
+          <option>My family</option>
+          <option>My team or organization</option>
+          <option>A school or university</option>
+          <option>A nonprofit or community group</option>
+          <option>A speaking event</option>
+        </select></label>
         <label>I am interested in<select name="interest" defaultValue="Discovery call">
           <option>Discovery call</option>
           <option>Shift Left Foundations</option>
@@ -34,9 +42,12 @@ export default function BookPage() {
           <option>Stronger Family Conversations</option>
           <option>Mental Fitness for Logical Minds</option>
           <option>The Shift Left Strategy Workshop</option>
+          <option>Leadership &amp; Team Wellbeing</option>
+          <option>Custom School or Community Program</option>
           <option>Consulting</option>
           <option>Speaking</option>
         </select></label>
+        <label>Organization or event name<input name="organization" placeholder="Optional" /></label>
         <label>What would you like to discuss?<textarea name="message" rows={5} required /></label>
         <label>Preferred days or times<textarea name="availability" rows={3} placeholder="For example: weekday mornings or Tuesday after 3 PM Pacific" /></label>
         <button className="button primary" type="submit">Request my discovery call</button>
@@ -45,8 +56,8 @@ export default function BookPage() {
     </section>
 
     <section className="contentTeaser">
-      <div><p className="eyebrow">EXPLORE FIRST</p><h2>Learn more before booking.</h2><p>Read about the strategy, browse current programs, or understand the engagement process.</p></div>
-      <div className="contentLinks"><Link href="/why-shift-left">The Shift Left Strategy →</Link><Link href="/programs">Programs →</Link><Link href="/how-it-works">How it works →</Link></div>
+      <div><p className="eyebrow">EXPLORE FIRST</p><h2>Learn more before booking.</h2><p>Read about the strategy, browse current programs, explore organizational solutions, or understand the engagement process.</p></div>
+      <div className="contentLinks"><Link href="/why-shift-left">The Shift Left Strategy →</Link><Link href="/programs">Programs →</Link><Link href="/organizations">Organizations →</Link><Link href="/how-it-works">How it works →</Link></div>
     </section>
   </main>;
 }
