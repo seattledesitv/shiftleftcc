@@ -10,14 +10,15 @@ const resources = [
 ];
 
 const pathways = [
-  { title: "Take the Shift Left Check-In", copy: "Reflect on awareness, learning, care, support, action, and sustainability in under five minutes.", href: "/assessment", cta: "Start the check-in →" },
+  { title: "Wellbeing Self-Assessment", copy: "Complete the detailed Mind Fitness and Physical Wellbeing questionnaire, then visualize your combined result against the 80% benchmark.", href: "/wellbeing-assessment", cta: "Take the full assessment →" },
+  { title: "Shift Left Check-In", copy: "Reflect on awareness, learning, care, support, action, and sustainability in under five minutes.", href: "/assessment", cta: "Start the quick check-in →" },
   { title: "Read the Journal", copy: "Explore practical ideas for mental fitness, leadership, family conversations, resilience, and systems thinking.", href: "/blog", cta: "Explore the Journal →" },
   { title: "Find a Program", copy: "Browse individual, family, leadership, and organizational experiences designed around proactive growth.", href: "/programs", cta: "View programs →" },
 ];
 
 export default function ResourcesPage() {
   return <main>
-    <section className="pageHero compactHero"><p className="eyebrow">PRACTICAL RESOURCES</p><h1>Tools for earlier awareness, better conversations, and useful action.</h1><p className="lead">Begin with a quick check-in, explore practical frameworks, or request a focused worksheet for yourself, your family, or your team.</p><div className="actions"><Link href="/assessment" className="button primary">Take the Shift Left Check-In</Link><Link href="/book" className="button secondary">Talk through your next step</Link></div></section>
+    <section className="pageHero compactHero"><p className="eyebrow">PRACTICAL RESOURCES</p><h1>Tools for earlier awareness, better conversations, and useful action.</h1><p className="lead">Begin with a quick check-in, take the detailed wellbeing assessment, explore practical frameworks, or request a focused worksheet for yourself, your family, or your team.</p><div className="actions"><Link href="/wellbeing-assessment" className="button primary">Take the Wellbeing Assessment</Link><Link href="/assessment" className="button secondary">Try the 5-minute Check-In</Link></div></section>
 
     <section className="offerings"><div className="sectionHeading"><p className="eyebrow">START HERE</p><h2>Choose the kind of support that fits today.</h2></div><div className="offeringGrid">{pathways.map((pathway, index) => <article className="offeringCard" key={pathway.title}><span className="cardNumber">{String(index + 1).padStart(2, "0")}</span><h3>{pathway.title}</h3><p>{pathway.copy}</p><Link href={pathway.href}>{pathway.cta}</Link></article>)}</div></section>
 
