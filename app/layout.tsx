@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <footer>
       <div className="footerBrand"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting" width={190} height={84} /><strong>SHIFT LEFT COACHING &amp; CONSULTING</strong><p>Notice earlier. Learn continuously. Care intentionally.</p></div>
       <div><strong>Discover</strong><Link href="/">Home</Link><Link href="/why-shift-left">The Strategy</Link><Link href="/my-story">My Story</Link><Link href="/why-me">Why Me</Link><Link href="/for-who">Who It Is For</Link><Link href="/how-it-works">How It Works</Link></div>
-      <div><strong>Explore</strong><Link href="/programs">Programs</Link><Link href="/organizations">Organizations</Link><Link href="/consulting">Consulting</Link><Link href="/speaking">Speaking</Link><Link href="/assessment">Shift Left Check-In</Link><Link href="/resources">Resources</Link><Link href="/blog">Journal</Link></div>
+      <div><strong>Explore</strong><Link href="/programs">Programs</Link><Link href="/organizations">Organizations</Link><Link href="/consulting">Consulting</Link><Link href="/speaking">Speaking</Link><Link href="/wellbeing-assessment">Wellbeing Assessment</Link><Link href="/assessment">Shift Left Check-In</Link><Link href="/resources">Resources</Link><Link href="/blog">Journal</Link></div>
       <div><strong>Connect</strong><Link href="/book">Book a discovery call</Link><a href="mailto:info@shiftleftcc.com">info@shiftleftcc.com</a><p>© 2026 Experience Healing LLC</p><p className="finePrint">Coaching and educational content do not replace licensed medical or psychological care.</p></div>
     </footer>
   </body></html>;
