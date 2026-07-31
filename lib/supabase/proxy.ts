@@ -7,8 +7,8 @@ const protectedPrefixes = [
   "/assessment",
   "/wellbeing-assessment",
   "/dashboard",
-  "/progress",
-  "/journal-entry",
+  "/my-journey",
+  "/studio",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (request.nextUrl.pathname === "/login" && user) {
-    const destination = request.nextUrl.searchParams.get("next") || "/dashboard";
+    const destination = request.nextUrl.searchParams.get("next") || "/my-journey";
     return NextResponse.redirect(new URL(destination, request.url));
   }
 
