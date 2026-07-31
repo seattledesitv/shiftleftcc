@@ -3,7 +3,13 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const moods = ["Great", "Good", "Okay", "Low", "Difficult"];
+const moods = [
+  { label: "Great", value: 5 },
+  { label: "Good", value: 4 },
+  { label: "Okay", value: 3 },
+  { label: "Low", value: 2 },
+  { label: "Difficult", value: 1 },
+];
 const suggestedTags = ["Work", "Family", "Stress", "Gratitude", "Health", "Growth"];
 
 export default function JournalForm() {
@@ -54,7 +60,7 @@ export default function JournalForm() {
     <label>How are you feeling?
       <select name="mood" defaultValue="">
         <option value="">Select a mood</option>
-        {moods.map(mood => <option key={mood}>{mood}</option>)}
+        {moods.map(mood => <option key={mood.value} value={mood.value}>{mood.label}</option>)}
       </select>
     </label>
     <label>Title
