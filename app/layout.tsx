@@ -5,6 +5,7 @@ import { createClient } from "../lib/supabase/server";
 import "./globals.css";
 import "./brand-overrides.css";
 import "./platform-overrides.css";
+import "./dashboard.css";
 
 export const metadata: Metadata = {
   title: "Shift Left Coaching & Consulting | Wellbeing Before Crisis",
