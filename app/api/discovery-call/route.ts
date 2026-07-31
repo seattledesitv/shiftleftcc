@@ -16,9 +16,25 @@ export async function POST(request: Request) {
     const interest = String(body.interest || "").trim();
     const message = String(body.message || "").trim();
     const availability = String(body.availability || "").trim();
+    const website = String(body.website || "").trim();
+    const captchaLeft = Number(body.captchaLeft);
+    const captchaRight = Number(body.captchaRight);
+    const captchaAnswer = Number(body.captchaAnswer);
+
+    if (website) {
+      return NextResponse.json({ success: true });
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
+    }
+
+    const validOperands = Number.isInteger(captchaLeft) && Number.isInteger(captchaRight)
+      && captchaLeft >= 2 && captchaLeft <= 9
+      && captchaRight >= 2 && captchaRight <= 9;
+
+    if (!validOperands || captchaAnswer !== captchaLeft + captchaRight) {
+      return NextResponse.json({ error: "The security-check answer is incorrect. Please try the new question." }, { status: 400 });
     }
 
     const apiKey = process.env.RESEND_API_KEY?.trim();
