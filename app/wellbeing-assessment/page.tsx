@@ -3,141 +3,105 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfUTvhDAO0O1VK205nojFYvGOVfP5Xyj_lau3eYD1A8cB18lw/viewform?embedded=true";
 const TARGET = 80;
+const questions = [
+  { category: "Mind Fitness", text: "I notice changes in my thoughts, stress, or mood before they become overwhelming." },
+  { category: "Mind Fitness", text: "I can pause and respond thoughtfully instead of reacting automatically." },
+  { category: "Mind Fitness", text: "I have a clear sense of purpose, priorities, or direction in my current life." },
+  { category: "Mind Fitness", text: "I feel supported and able to talk openly with at least one trusted person." },
+  { category: "Mind Fitness", text: "I regularly reflect, learn from feedback, and adjust when something is not working." },
+  { category: "Physical", text: "I usually get enough sleep to function with reasonable energy and focus." },
+  { category: "Physical", text: "I include movement or physical activity in my routine consistently." },
+  { category: "Physical", text: "My eating and hydration habits generally support my energy and wellbeing." },
+  { category: "Physical", text: "I make time for rest, recovery, and breaks before exhaustion builds." },
+  { category: "Physical", text: "My current routines feel sustainable for the responsibilities I am carrying." },
+] as const;
+
+const choices = [
+  { label: "Not at all", value: 1 },
+  { label: "Rarely", value: 2 },
+  { label: "Sometimes", value: 3 },
+  { label: "Often", value: 4 },
+  { label: "Usually", value: 5 },
+  { label: "Consistently", value: 6 },
+];
 
 export default function WellbeingAssessmentPage() {
-  const [mindFitness, setMindFitness] = useState(23);
-  const [physical, setPhysical] = useState(30);
+  const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(0));
+  const [current, setCurrent] = useState(0);
+  const [showResults, setShowResults] = useState(false);
 
-  const total = useMemo(() => Math.min(100, mindFitness + physical), [mindFitness, physical]);
+  const completed = answers.every(Boolean);
+  const progress = Math.round((answers.filter(Boolean).length / questions.length) * 100);
+  const mindFitness = useMemo(() => Math.round((answers.slice(0, 5).reduce((sum, value) => sum + value, 0) / 30) * 50), [answers]);
+  const physical = useMemo(() => Math.round((answers.slice(5).reduce((sum, value) => sum + value, 0) / 30) * 50), [answers]);
+  const total = Math.min(100, mindFitness + physical);
   const gap = Math.max(0, TARGET - total);
+
   const status = total >= TARGET
-    ? {
-        label: "Healthy wellbeing range",
-        message: "Your combined score meets or exceeds the 80% wellbeing benchmark. The next step is protecting the habits and support systems that help you maintain it.",
-      }
+    ? { title: "Healthy wellbeing range", body: "Your combined score meets or exceeds the 80% benchmark. Protect the routines and relationships that help you sustain this foundation." }
     : total >= 60
-      ? {
-          label: "Building a strong foundation",
-          message: `You are ${gap} points from the current wellbeing benchmark. Focus on one repeatable practice in the lower-scoring area rather than trying to change everything at once.`,
-        }
-      : {
-          label: "Opportunity for earlier support",
-          message: `You are ${gap} points from the current wellbeing benchmark. Consider identifying one early signal, one supportive person, and one practical action you can begin this week.`,
-        };
+      ? { title: "A developing foundation", body: `You are ${gap} points from the benchmark. Focus on one repeatable practice in the lower-scoring area rather than changing everything at once.` }
+      : { title: "An opportunity to shift earlier", body: `You are ${gap} points from the benchmark. Begin with one early signal, one supportive person, and one practical action you can repeat this week.` };
+
+  function answer(value: number) {
+    setAnswers(currentAnswers => currentAnswers.map((item, index) => index === current ? value : item));
+    if (current < questions.length - 1) setTimeout(() => setCurrent(index => index + 1), 120);
+  }
+
+  function reset() {
+    setAnswers(Array(questions.length).fill(0));
+    setCurrent(0);
+    setShowResults(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return <main>
     <section className="pageHero compactHero">
-      <p className="eyebrow">WELLBEING SELF-ASSESSMENT</p>
-      <h1>Understand your current balance between mind fitness and physical wellbeing.</h1>
-      <p className="lead">Complete the assessment, review your category scores, and compare your combined wellbeing score with the current 80% benchmark. This is an educational self-reflection tool—not a clinical diagnosis.</p>
-      <div className="actions">
-        <a className="button primary" href="#assessment-form">Start the assessment</a>
-        <a className="button secondary" href="#results-visualizer">View the score model</a>
+      <p className="eyebrow">MEMBER WELLBEING SELF-ASSESSMENT</p>
+      <h1>Measure your current balance between mind fitness and physical wellbeing.</h1>
+      <p className="lead">Answer ten practical questions and receive an immediate score, benchmark comparison, and recommended next step. This is an educational self-reflection tool—not a clinical diagnosis.</p>
+    </section>
+
+    {!showResults ? <section className="nativeAssessment">
+      <div className="assessmentProgress"><span style={{ width: `${progress}%` }} /></div>
+      <article className="questionCard">
+        <p className="eyebrow">QUESTION {current + 1} OF {questions.length} · {questions[current].category}</p>
+        <h2>{questions[current].text}</h2>
+        <div className="answerScale">
+          {choices.map(choice => <button key={choice.value} type="button" aria-pressed={answers[current] === choice.value} onClick={() => answer(choice.value)}>{choice.label}</button>)}
+        </div>
+        <div className="assessmentNav">
+          <button className="button secondary" type="button" disabled={current === 0} onClick={() => setCurrent(index => Math.max(0, index - 1))}>← Previous</button>
+          {current < questions.length - 1 ? <button className="button secondary" type="button" disabled={!answers[current]} onClick={() => setCurrent(index => Math.min(questions.length - 1, index + 1))}>Next →</button> : <button className="button primary" type="button" disabled={!completed} onClick={() => setShowResults(true)}>View my results</button>}
+        </div>
+      </article>
+    </section> : <section className="nativeAssessment">
+      <div className="resultDashboard">
+        <article className="scorePanel">
+          <p className="eyebrow">YOUR COMBINED WELLBEING SCORE</p>
+          <div className="scoreBig">{total}%</div>
+          <h2>{status.title}</h2>
+          <p>{status.body}</p>
+          <div className="scoreBars">
+            <div className="scoreBar"><label><span>Mind Fitness</span><strong>{mindFitness}/50</strong></label><div className="scoreTrack"><span className="mind" style={{ width: `${mindFitness * 2}%` }} /></div></div>
+            <div className="scoreBar"><label><span>Physical Wellbeing</span><strong>{physical}/50</strong></label><div className="scoreTrack"><span className="physical" style={{ width: `${physical * 2}%` }} /></div></div>
+          </div>
+          <div className="actions"><Link href="/book?program=Wellbeing%20Self-Assessment" className="button primary">Discuss my result</Link><Link href="/resources" className="button secondary">Explore resources</Link><button type="button" className="button secondary" onClick={reset}>Retake</button></div>
+        </article>
+        <article className="chartPanel">
+          <p className="eyebrow">80% WELLBEING BENCHMARK</p>
+          <div className="benchmarkChart">
+            <div className="benchmarkLine"><strong>80% benchmark</strong></div>
+            <div className="stackedScore" style={{ height: `${total}%` }}>
+              <span style={{ height: `${total ? (physical / total) * 100 : 0}%`, background: "#4384eb" }}>{physical ? `${physical}%` : ""}</span>
+              <span style={{ height: `${total ? (mindFitness / total) * 100 : 0}%`, background: "#ef493d" }}>{mindFitness ? `${mindFitness}%` : ""}</span>
+            </div>
+          </div>
+          <p><strong>Mind Fitness + Physical Wellbeing = {total}%</strong></p>
+          <p className="finePrint">The 80% line is a general educational benchmark used by this assessment, not a medical threshold.</p>
+        </article>
       </div>
-    </section>
-
-    <section className="contentPage">
-      <section className="intro">
-        <p className="eyebrow">HOW IT WORKS</p>
-        <div>
-          <h2>Assess. Understand. Shift earlier.</h2>
-          <p>First, complete the Google Form below. After reviewing your results, enter the Mind Fitness and Physical values in the results visualizer. The chart will combine both dimensions and show how your score compares with the 80% wellbeing benchmark.</p>
-          <p><strong>Current scoring model:</strong> Mind Fitness contributes up to 50 points and Physical Wellbeing contributes up to 50 points, creating a combined score out of 100.</p>
-        </div>
-      </section>
-
-      <section id="assessment-form" className="consultingTeaser">
-        <p className="eyebrow">STEP 1 · COMPLETE THE ASSESSMENT</p>
-        <h2>Answer based on your current experience.</h2>
-        <p>Choose responses that reflect how you are doing most of the time—not only on your best or hardest day.</p>
-        <div style={{ marginTop: "2rem", borderRadius: "24px", overflow: "hidden", background: "white", border: "1px solid rgba(17, 63, 54, 0.12)" }}>
-          <iframe
-            src={FORM_URL}
-            title="Shift Left wellbeing self-assessment"
-            width="100%"
-            height="1650"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-            loading="lazy"
-          >Loading assessment…</iframe>
-        </div>
-        <p className="finePrint">If the embedded form does not load, <a href={FORM_URL.replace("?embedded=true", "")} target="_blank" rel="noreferrer">open the assessment in a new tab</a>.</p>
-      </section>
-
-      <section id="results-visualizer" className="contentTeaser" style={{ alignItems: "stretch" }}>
-        <div>
-          <p className="eyebrow">STEP 2 · VISUALIZE YOUR RESULT</p>
-          <h2>Compare your combined score with the 80% benchmark.</h2>
-          <p>Enter the category values shown in your assessment results. Your information stays in your browser and is not saved by this page.</p>
-
-          <label style={{ display: "block", marginTop: "1.5rem" }}>
-            <strong>Mind Fitness: {mindFitness}%</strong>
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={mindFitness}
-              onChange={(event) => setMindFitness(Number(event.target.value))}
-              style={{ width: "100%", marginTop: ".75rem" }}
-            />
-          </label>
-
-          <label style={{ display: "block", marginTop: "1.5rem" }}>
-            <strong>Physical Wellbeing: {physical}%</strong>
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={physical}
-              onChange={(event) => setPhysical(Number(event.target.value))}
-              style={{ width: "100%", marginTop: ".75rem" }}
-            />
-          </label>
-
-          <div style={{ marginTop: "2rem", padding: "1.5rem", borderRadius: "20px", background: "rgba(26, 122, 104, 0.08)" }}>
-            <p className="eyebrow">YOUR COMBINED SCORE</p>
-            <h2 style={{ marginBottom: ".5rem" }}>{total}%</h2>
-            <p><strong>{status.label}</strong></p>
-            <p>{status.message}</p>
-          </div>
-        </div>
-
-        <div aria-label={`Combined wellbeing score ${total} percent compared with an 80 percent benchmark`} style={{ position: "relative", minHeight: "430px", padding: "2rem 1.5rem 1.5rem", borderRadius: "24px", background: "white", border: "1px solid rgba(17, 63, 54, 0.12)" }}>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", marginBottom: "1.5rem", fontSize: ".9rem" }}>
-            <span><i style={{ display: "inline-block", width: "12px", height: "12px", marginRight: "6px", background: "#ef493d" }} />Mind Fitness</span>
-            <span><i style={{ display: "inline-block", width: "12px", height: "12px", marginRight: "6px", background: "#4384eb" }} />Physical</span>
-          </div>
-
-          <div style={{ position: "relative", height: "315px", borderLeft: "1px solid #1f2937", borderBottom: "1px solid #1f2937", marginLeft: "48px", background: "repeating-linear-gradient(to top, transparent 0, transparent 76px, rgba(15, 23, 42, 0.12) 77px, rgba(15, 23, 42, 0.12) 78px)" }}>
-            {[0, 25, 50, 75, 100].map(value => <span key={value} style={{ position: "absolute", left: "-52px", bottom: `calc(${value}% - 8px)`, fontSize: ".75rem" }}>{value}%</span>)}
-
-            <div style={{ position: "absolute", left: 0, right: 0, bottom: "80%", borderTop: "2px solid #f0ad1b" }}>
-              <span style={{ position: "absolute", top: "-29px", left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap", fontWeight: 700 }}>80% wellbeing benchmark</span>
-            </div>
-
-            <div style={{ position: "absolute", left: "28%", width: "44%", bottom: 0, height: `${total}%`, display: "flex", flexDirection: "column-reverse", justifyContent: "flex-start" }}>
-              <div style={{ height: `${total ? (physical / total) * 100 : 0}%`, background: "#4384eb", display: "grid", placeItems: "center", color: "white", fontWeight: 700 }}>{physical ? `${physical}%` : ""}</div>
-              <div style={{ height: `${total ? (mindFitness / total) * 100 : 0}%`, background: "#ef493d", display: "grid", placeItems: "center", color: "white", fontWeight: 700 }}>{mindFitness ? `${mindFitness}%` : ""}</div>
-            </div>
-
-            <strong style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", bottom: `calc(${total}% + 10px)`, fontSize: "1.15rem" }}>{total}% combined</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="consultingTeaser">
-        <p className="eyebrow">STEP 3 · CHOOSE ONE NEXT STEP</p>
-        <h2>Your score is a starting point, not a label.</h2>
-        <p>Use the result to begin a conversation, select a practical resource, or explore guided support for the area that needs attention.</p>
-        <div className="actions">
-          <Link href="/resources" className="button primary">Explore practical resources</Link>
-          <Link href="/book?program=Wellbeing%20Self-Assessment" className="button secondary">Discuss my results</Link>
-          <Link href="/assessment" className="button secondary">Take the Shift Left Check-In</Link>
-        </div>
-      </section>
-    </section>
+    </section>}
   </main>;
 }
