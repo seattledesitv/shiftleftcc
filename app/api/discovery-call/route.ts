@@ -21,13 +21,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
     }
 
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json({ error: "Email delivery is not configured yet." }, { status: 503 });
+    const apiKey = process.env.RESEND_API_KEY?.trim();
+    const to = process.env.DISCOVERY_CALL_TO_EMAIL?.trim();
+    const configuredFrom = process.env.RESEND_FROM_EMAIL?.trim();
+
+    if (!apiKey || !to) {
+      return NextResponse.json({ error: "Email delivery is not fully configured. Add RESEND_API_KEY and DISCOVERY_CALL_TO_EMAIL in Vercel, then redeploy." }, { status: 503 });
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const to = process.env.DISCOVERY_CALL_TO_EMAIL || "info@shiftleftcc.com";
-    const from = process.env.RESEND_FROM_EMAIL || "Shift Left Website <onboarding@resend.dev>";
+    const from = configuredFrom || "Shift Left Website <onboarding@resend.dev>";
+    const resend = new Resend(apiKey);
 
     const { error } = await resend.emails.send({
       from,
@@ -47,7 +50,12 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      const testMode = from.includes("@resend.dev");
+      const helpfulMessage = testMode && /only send testing emails/i.test(error.message)
+        ? `Resend test mode can only deliver to the email address associated with your Resend account. The current configured recipient is ${to}. Confirm that this matches the Resend account email, save the Vercel environment variable for Production, Preview, and Development as needed, and redeploy. Otherwise verify shiftleftcc.com in Resend and use a sender such as hello@shiftleftcc.com.`
+        : error.message;
+
+      return NextResponse.json({ error: helpfulMessage }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
