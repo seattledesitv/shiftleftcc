@@ -12,7 +12,7 @@ export default async function StudioMembersPage() {
 
   const { data: members } = await supabase
     .from("profiles")
-    .select("user_id,display_name,email,created_at")
+    .select("id,full_name,created_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -21,8 +21,8 @@ export default async function StudioMembersPage() {
     <nav className="journeyNav studioNav"><Link href="/studio">Overview</Link><Link href="/studio/members">Members</Link><Link href="/studio/assessments">Assessments</Link></nav>
     <section className="memberDashboard"><div className="historyList">
       <div className="dashboardCard"><p className="eyebrow">REGISTERED MEMBERS</p><h2>{members?.length || 0} member{members?.length === 1 ? "" : "s"}</h2></div>
-      {(members || []).map(member => <article className="dashboardCard memberRow" key={member.user_id}>
-        <div><p className="eyebrow">MEMBER</p><h2>{member.display_name || member.email || "Unnamed member"}</h2><p>{member.email || "No email stored in profile"}</p></div>
+      {(members || []).map(member => <article className="dashboardCard memberRow" key={member.id}>
+        <div><p className="eyebrow">MEMBER</p><h2>{member.full_name || "Member profile"}</h2><p className="finePrint">Account ID: {member.id.slice(0, 8)}…</p></div>
         <p className="finePrint">Joined {new Date(member.created_at).toLocaleDateString()}</p>
       </article>)}
       {!members?.length && <div className="dashboardCard"><h2>No member profiles found.</h2><p>Profiles will appear after users register and the Phase A migration is active.</p></div>}
