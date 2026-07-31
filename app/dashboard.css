@@ -1,0 +1,13 @@
+.dashboardHero{background:radial-gradient(circle at 86% 16%,rgba(24,143,208,.16),transparent 30%),linear-gradient(135deg,#fffaf3,#eef8f3)}
+.memberDashboard{padding:clamp(44px,5vw,76px) clamp(22px,6vw,92px);background:#f8fbfa}
+.dashboardGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:1250px;margin:0 auto}
+.dashboardCard{padding:clamp(28px,3.5vw,46px);border:1px solid var(--line);border-radius:26px;background:white;box-shadow:0 16px 48px rgba(22,53,70,.07)}
+.dashboardCard h2{font-size:clamp(30px,3vw,44px);color:var(--navy);margin-bottom:14px}
+.dashboardCard p:not(.eyebrow){color:var(--soft);font-size:17px}
+.dashboardScoreCard{grid-row:span 2;background:linear-gradient(145deg,#eef9e8,#edf7fb)}
+.dashboardScore{font:700 clamp(70px,9vw,118px)/1 'Playfair Display',serif;color:var(--navy);margin:10px 0 18px}
+.miniScoreGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0}
+.miniScoreGrid>div{padding:18px;border-radius:18px;background:rgba(255,255,255,.78);display:grid;gap:4px}
+.miniScoreGrid span{font-size:13px;color:var(--soft);font-weight:700}
+.miniScoreGrid strong{font-size:24px;color:var(--navy)}
+@media(max-width:900px){.dashboardGrid{grid-template-columns:1fr}.dashboardScoreCard{grid-row:auto}}
