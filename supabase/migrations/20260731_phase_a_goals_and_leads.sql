@@ -38,6 +38,11 @@ for all to authenticated
 using (user_id = auth.uid())
 with check (user_id = auth.uid());
 
+drop policy if exists "public can submit discovery leads" on public.discovery_call_leads;
+create policy "public can submit discovery leads" on public.discovery_call_leads
+for insert to anon, authenticated
+with check (status = 'new');
+
 drop policy if exists "admins manage discovery leads" on public.discovery_call_leads;
 create policy "admins manage discovery leads" on public.discovery_call_leads
 for all to authenticated
@@ -45,4 +50,5 @@ using (public.is_admin())
 with check (public.is_admin());
 
 grant select, insert, update, delete on public.member_goals to authenticated;
+grant insert on public.discovery_call_leads to anon, authenticated;
 grant select, update, delete on public.discovery_call_leads to authenticated;
