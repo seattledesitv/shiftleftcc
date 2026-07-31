@@ -28,9 +28,31 @@ export async function POST(request: Request) {
     const validOperands = Number.isInteger(captchaLeft) && Number.isInteger(captchaRight) && captchaLeft >= 2 && captchaLeft <= 9 && captchaRight >= 2 && captchaRight <= 9;
     if (!validOperands || captchaAnswer !== captchaLeft + captchaRight) return NextResponse.json({ error: "The security-check answer is incorrect. Please try the new question." }, { status: 400 });
 
+    const apiKey = process.env.RESEND_API_KEY?.trim();
+    const to = process.env.DISCOVERY_CALL_TO_EMAIL?.trim();
+    const configuredFrom = process.env.RESEND_FROM_EMAIL?.trim();
+    let emailStatus: "sent" | "failed" = "failed";
+    let emailError: string | null = null;
+
+    if (!apiKey || !to) {
+      emailError = "Email delivery is not configured.";
+    } else {
+      const from = configuredFrom || "Shift Left Website <onboarding@resend.dev>";
+      const resend = new Resend(apiKey);
+      const { error } = await resend.emails.send({
+        from,
+        to: [to],
+        replyTo: email,
+        subject: `Discovery call request from ${name}`,
+        html: `<h2>New discovery call request</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p><p><strong>Audience:</strong> ${escapeHtml(audience || "Not selected")}</p><p><strong>Organization/Event:</strong> ${escapeHtml(organization || "Not provided")}</p><p><strong>Interest:</strong> ${escapeHtml(interest || "Discovery call")}</p><p><strong>Preferred availability:</strong> ${escapeHtml(availability || "Not provided")}</p><h3>What they would like to discuss</h3><p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>`,
+      });
+      if (error) emailError = error.message;
+      else emailStatus = "sent";
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    const { data: lead } = await supabase.from("discovery_call_leads").insert({
+    const { error: saveError } = await supabase.from("discovery_call_leads").insert({
       user_id: user?.id || null,
       name,
       email,
@@ -40,33 +62,12 @@ export async function POST(request: Request) {
       interest: interest || null,
       message,
       availability: availability || null,
-    }).select("id").single();
-
-    const apiKey = process.env.RESEND_API_KEY?.trim();
-    const to = process.env.DISCOVERY_CALL_TO_EMAIL?.trim();
-    const configuredFrom = process.env.RESEND_FROM_EMAIL?.trim();
-
-    if (!apiKey || !to) {
-      if (lead?.id) await supabase.from("discovery_call_leads").update({ email_status: "failed", email_error: "Email delivery is not configured." }).eq("id", lead.id);
-      return NextResponse.json({ error: "Your request was saved, but email delivery is not fully configured." }, { status: 503 });
-    }
-
-    const from = configuredFrom || "Shift Left Website <onboarding@resend.dev>";
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
-      from,
-      to: [to],
-      replyTo: email,
-      subject: `Discovery call request from ${name}`,
-      html: `<h2>New discovery call request</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p><p><strong>Audience:</strong> ${escapeHtml(audience || "Not selected")}</p><p><strong>Organization/Event:</strong> ${escapeHtml(organization || "Not provided")}</p><p><strong>Interest:</strong> ${escapeHtml(interest || "Discovery call")}</p><p><strong>Preferred availability:</strong> ${escapeHtml(availability || "Not provided")}</p><h3>What they would like to discuss</h3><p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>`,
+      email_status: emailStatus,
+      email_error: emailError,
     });
 
-    if (error) {
-      if (lead?.id) await supabase.from("discovery_call_leads").update({ email_status: "failed", email_error: error.message }).eq("id", lead.id);
-      return NextResponse.json({ error: `Your request was saved, but the notification email failed: ${error.message}` }, { status: 500 });
-    }
-
-    if (lead?.id) await supabase.from("discovery_call_leads").update({ email_status: "sent", email_error: null }).eq("id", lead.id);
+    if (saveError) return NextResponse.json({ error: `Unable to save your request: ${saveError.message}` }, { status: 500 });
+    if (emailStatus === "failed") return NextResponse.json({ error: `Your request was saved, but the notification email failed: ${emailError}` }, { status: 500 });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Unable to send the request." }, { status: 500 });
