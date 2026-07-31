@@ -8,10 +8,11 @@ export default async function MyJourneyPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/my-journey");
 
-  const [{ data: latestResult }, { data: activeSession }, { count: completedCount }] = await Promise.all([
+  const [{ data: latestResult }, { data: activeSession }, { count: completedCount }, { count: activityCount }] = await Promise.all([
     supabase.from("assessment_results").select("total_score,category_scores,interpretation,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     supabase.from("assessment_sessions").select("id,current_question,answers,updated_at").eq("user_id", user.id).eq("status", "in_progress").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
     supabase.from("assessment_results").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+    supabase.from("activity_entries").select("id", { count: "exact", head: true }).eq("user_id", user.id),
   ]);
 
   const scores = (latestResult?.category_scores || {}) as { mind_fitness?: number; physical_wellbeing?: number };
@@ -21,7 +22,7 @@ export default async function MyJourneyPage() {
     <section className="pageHero compactHero dashboardHero">
       <p className="eyebrow">MY JOURNEY</p>
       <h1>Welcome back.</h1>
-      <p className="lead">Your private space for assessments, progress, reflections, resources, and the next practical step in your Shift Left journey.</p>
+      <p className="lead">Your private space for assessments, activity, progress, reflections, resources, and the next practical step in your Shift Left journey.</p>
     </section>
 
     <nav className="journeyNav" aria-label="My Journey navigation">
@@ -29,6 +30,7 @@ export default async function MyJourneyPage() {
       <Link href="/my-journey/assessments">My Assessments</Link>
       <Link href="/my-journey/progress">My Progress</Link>
       <Link href="/my-journey/journal">My Journal</Link>
+      <Link href="/my-journey/activity">My Activity</Link>
       <Link href="/resources">My Resources</Link>
       <Link href="/book">My Coaching</Link>
     </nav>
@@ -65,6 +67,13 @@ export default async function MyJourneyPage() {
           <h2>{completedCount || 0} completed assessment{completedCount === 1 ? "" : "s"}</h2>
           <p>Each completed assessment builds your personal trend view.</p>
           <Link className="button secondary" href="/my-journey/assessments">Open my assessment history</Link>
+        </article>
+
+        <article className="dashboardCard">
+          <p className="eyebrow">MY ACTIVITY</p>
+          <h2>{activityCount || 0} saved activity entr{activityCount === 1 ? "y" : "ies"}</h2>
+          <p>Track movement, steps, sleep, and recovery so you can notice patterns alongside assessment scores.</p>
+          <Link className="button secondary" href="/my-journey/activity">Open my activity</Link>
         </article>
 
         <article className="dashboardCard">
