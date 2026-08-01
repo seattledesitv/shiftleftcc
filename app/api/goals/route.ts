@@ -10,9 +10,14 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const title = String(body.title || "").trim().slice(0, 140);
-  const category = String(body.category || "Wellbeing").trim().slice(0, 50);
+  const category = String(body.category || "Life Goal").trim().slice(0, 50);
   const targetDate = String(body.targetDate || "").trim() || null;
   const notes = String(body.notes || "").trim().slice(0, 2000) || null;
+  const whyItMatters = String(body.whyItMatters || "").trim().slice(0, 2500) || null;
+  const successDefinition = String(body.successDefinition || "").trim().slice(0, 2500) || null;
+  const lifeAreaId = String(body.lifeAreaId || "").trim() || null;
+  const visionId = String(body.visionId || "").trim() || null;
+  const priority = Math.max(1, Math.min(5, Number(body.priority) || 3));
 
   if (!title) return NextResponse.json({ error: "Add a goal title." }, { status: 400 });
 
@@ -22,6 +27,11 @@ export async function POST(request: Request) {
     category,
     target_date: targetDate,
     notes,
+    why_it_matters: whyItMatters,
+    success_definition: successDefinition,
+    life_area_id: lifeAreaId,
+    vision_id: visionId,
+    priority,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
