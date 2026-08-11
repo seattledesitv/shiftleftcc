@@ -16,6 +16,8 @@ type CheckoutDebug = {
   stripeType?: string | null;
   stripeCode?: string | null;
   stripeRequestId?: string | null;
+  supabaseUrlConfigured?: boolean;
+  serviceRoleConfigured?: boolean;
 };
 
 export default function CheckoutClient() {
@@ -36,9 +38,7 @@ export default function CheckoutClient() {
       });
       const result = await response.json();
       setDebug({ requestId: result.requestId, ...(result.diagnostics || {}) });
-      if (!response.ok || !result.clientSecret) {
-        throw new Error(result.error || "Unable to start checkout.");
-      }
+      if (!response.ok || !result.clientSecret) throw new Error(result.error || "Unable to start checkout.");
       return result.clientSecret as string;
     } catch (checkoutError) {
       const message = checkoutError instanceof Error ? checkoutError.message : "Unable to start checkout.";
@@ -78,6 +78,8 @@ export default function CheckoutClient() {
         <dl>
           <div><dt>Browser key mode</dt><dd>{publishableMode}</dd></div>
           {debug.stripeSecretMode && <div><dt>Server key mode</dt><dd>{debug.stripeSecretMode}</dd></div>}
+          {typeof debug.supabaseUrlConfigured === "boolean" && <div><dt>Supabase URL</dt><dd>{debug.supabaseUrlConfigured ? "configured" : "MISSING"}</dd></div>}
+          {typeof debug.serviceRoleConfigured === "boolean" && <div><dt>Service role key</dt><dd>{debug.serviceRoleConfigured ? "configured" : "MISSING"}</dd></div>}
           {debug.sessionMode && <div><dt>Session mode</dt><dd>{debug.sessionMode}</dd></div>}
           {debug.requestId && <div><dt>Request ID</dt><dd>{debug.requestId}</dd></div>}
           {debug.sessionId && <div><dt>Stripe session</dt><dd>{debug.sessionId}</dd></div>}
