@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "../lib/supabase/server";
+import { createClient } from "../../lib/supabase/server";
 
 const outcomes: Record<string, string[]> = {
   "shift-left-foundations": ["Recognize patterns and early signals", "Clarify priorities and next steps", "Create sustainable wellbeing practices"],
