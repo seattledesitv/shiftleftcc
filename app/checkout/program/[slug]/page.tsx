@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "../../../lib/supabase/server";
+import { createClient } from "../../../../lib/supabase/server";
 import ProgramCheckoutClient from "./CheckoutClient";
 import "../../ego-and-empathy/checkout.css";
 
