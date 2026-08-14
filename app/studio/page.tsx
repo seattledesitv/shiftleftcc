@@ -10,7 +10,7 @@ export default async function StudioPage() {
   const { data: admin } = await supabase.from("admins").select("role,email").eq("user_id", user.id).maybeSingle();
   if (!admin) redirect("/my-journey");
 
-  const [{ count: members }, { count: results }, { count: sessions }, { count: leads }, { count: bookOrders }, { count: books }, { count: products }, { count: commerceOrders }, { count: seoPages }] = await Promise.all([
+  const [{ count: members }, { count: results }, { count: sessions }, { count: leads }, { count: bookOrders }, { count: books }, { count: products }, { count: commerceOrders }, { count: seoPages }, { count: platformSettings }] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase.from("assessment_results").select("id", { count: "exact", head: true }),
     supabase.from("assessment_sessions").select("id", { count: "exact", head: true }).eq("status", "in_progress"),
@@ -20,9 +20,11 @@ export default async function StudioPage() {
     supabase.from("commerce_products").select("id", { count: "exact", head: true }),
     supabase.from("commerce_orders").select("id", { count: "exact", head: true }),
     supabase.from("seo_pages").select("id", { count: "exact", head: true }),
+    supabase.from("platform_settings").select("id", { count: "exact", head: true }),
   ]);
 
-  return <main><section className="pageHero compactHero dashboardHero"><p className="eyebrow">SHIFT LEFT STUDIO</p><h1>Admin workspace.</h1><p className="lead">Manage commerce, programs, SEO, assessments, members, leads, books, orders, content, resources, and platform operations.</p></section><nav className="journeyNav studioNav"><Link href="/studio">Overview</Link><Link href="/studio/commerce">Commerce</Link><Link href="/studio/commerce-orders">Orders</Link><Link href="/studio/seo">SEO Center</Link><Link href="/studio/members">Members</Link><Link href="/studio/assessments">Assessments</Link><Link href="/studio/leads">Leads</Link><Link href="/studio/books">Books</Link><Link href="/studio/book-orders">Book Orders</Link></nav><section className="memberDashboard"><div className="dashboardGrid">
+  return <main><section className="pageHero compactHero dashboardHero"><p className="eyebrow">SHIFT LEFT STUDIO</p><h1>Admin workspace.</h1><p className="lead">Manage platform settings, commerce, programs, SEO, assessments, members, leads, books, orders, content, resources, and operations.</p></section><nav className="journeyNav studioNav"><Link href="/studio">Overview</Link><Link href="/studio/platform-settings">Platform</Link><Link href="/studio/commerce">Commerce</Link><Link href="/studio/commerce-orders">Orders</Link><Link href="/studio/seo">SEO Center</Link><Link href="/studio/members">Members</Link><Link href="/studio/assessments">Assessments</Link><Link href="/studio/leads">Leads</Link><Link href="/studio/books">Books</Link><Link href="/studio/book-orders">Book Orders</Link></nav><section className="memberDashboard"><div className="dashboardGrid">
+    <article className="dashboardCard"><p className="eyebrow">PLATFORM SETTINGS</p><div className="dashboardScore">{platformSettings || 0}</div><h2>Central configuration</h2><p>Brand, contact, SEO defaults, commerce, email, scheduling, analytics and feature flags.</p><Link className="button secondary" href="/studio/platform-settings">Open platform settings</Link></article>
     <article className="dashboardCard"><p className="eyebrow">COMMERCE CATALOG</p><div className="dashboardScore">{products || 0}</div><h2>Programs &amp; services</h2><Link className="button secondary" href="/studio/commerce">Manage pricing</Link></article>
     <article className="dashboardCard"><p className="eyebrow">COMMERCE ORDERS</p><div className="dashboardScore">{commerceOrders || 0}</div><h2>Program purchases</h2><Link className="button secondary" href="/studio/commerce-orders">View orders</Link></article>
     <article className="dashboardCard"><p className="eyebrow">SEO CENTER</p><div className="dashboardScore">{seoPages || 0}</div><h2>Search-optimized pages</h2><Link className="button secondary" href="/studio/seo">Manage SEO</Link></article>
