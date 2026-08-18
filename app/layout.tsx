@@ -159,7 +159,7 @@ function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { 
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
-    if (children.length) return <details className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
+    if (children.length) return <details name="main-navigation" className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
       <summary className={item.is_cta ? "navCta" : undefined}><span>{item.label}</span><span className="navChevron" aria-hidden="true">⌄</span></summary>
       <div className="navDropdownMenu">
         <SmartLink item={item} className="navDropdownOverview">Overview</SmartLink>
