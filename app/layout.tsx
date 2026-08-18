@@ -6,6 +6,7 @@ import "./globals.css";
 import "./brand-overrides.css";
 import "./platform-overrides.css";
 import "./dashboard.css";
+import "./navigation-final.css";
 
 const siteUrl = "https://www.shiftleftcc.com";
 
