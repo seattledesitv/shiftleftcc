@@ -98,6 +98,12 @@ function dedupeNavigation(items: NavItem[]) {
     });
 }
 
+function ensureHeaderHome(items: NavItem[]) {
+  const hasHome = items.some(item => !item.parent_id && item.is_visible && normalizeHref(item.href) === "/");
+  if (hasHome) return items;
+  return [fallbackHeader[0], ...items];
+}
+
 function SmartLink({ item, className, children }: { item: NavItem; className?: string; children?: React.ReactNode }) {
   const external = /^https?:\/\//i.test(item.href);
   if (external) return <a href={item.href} className={className} target={item.open_new_tab ? "_blank" : undefined} rel={item.open_new_tab ? "noopener noreferrer" : undefined}>{children || item.label}</a>;
@@ -105,7 +111,7 @@ function SmartLink({ item, className, children }: { item: NavItem; className?: s
 }
 
 function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  const allowed = dedupeNavigation(items.filter(item => isAllowed(item, user, isAdmin)));
+  const allowed = dedupeNavigation(ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin)));
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
