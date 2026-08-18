@@ -53,6 +53,14 @@ const fallbackHeader: NavItem[] = [
   { id: "journey", location: "header", label: "My Journey", href: "/my-journey", parent_id: null, display_order: 80, is_visible: true, is_cta: false, auth_visibility: "authenticated", open_new_tab: false },
   { id: "studio", location: "header", label: "Studio", href: "/studio", parent_id: null, display_order: 90, is_visible: true, is_cta: false, auth_visibility: "admin", open_new_tab: false },
   { id: "start", location: "header", label: "Start Your Journey", href: "/book", parent_id: null, display_order: 100, is_visible: true, is_cta: true, auth_visibility: "public", open_new_tab: false },
+  { id: "services-programs", location: "header", label: "Coaching Programs", href: "/programs", parent_id: "services", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "services-consulting", location: "header", label: "Consulting", href: "/consulting", parent_id: "services", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "services-speaking", location: "header", label: "Speaking & Workshops", href: "/speaking", parent_id: "services", display_order: 30, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "services-assessment", location: "header", label: "Wellbeing Assessment", href: "/wellbeing-assessment", parent_id: "services", display_order: 40, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "resources-blog", location: "header", label: "Blog", href: "/blog", parent_id: "resources", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "resources-assess", location: "header", label: "Assessments", href: "/wellbeing-assessment", parent_id: "resources", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "about-journey", location: "header", label: "My Journey", href: "/my-story", parent_id: "about", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "about-why", location: "header", label: "Why Work With Me", href: "/why-me", parent_id: "about", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
 ];
 
 const fallbackDiscover: NavItem[] = [
@@ -123,6 +131,18 @@ function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { 
   })}</>;
 }
 
+function HeaderSubNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
+  const allowed = ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin));
+  const children = allowed.filter(item => item.parent_id).sort((a, b) => a.display_order - b.display_order);
+  if (!children.length) return null;
+  return <div className="headerSubnav" aria-label="Secondary navigation">
+    {children.map(child => {
+      const parent = allowed.find(item => item.id === child.parent_id);
+      return <SmartLink item={child} key={child.id}><span className="subnavParent">{parent?.label}</span><span className="subnavLabel">{child.label}</span></SmartLink>;
+    })}
+  </div>;
+}
+
 function FooterNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
   return <>{dedupeNavigation(items.filter(item => !item.parent_id && isAllowed(item, user, isAdmin))).map(item => <SmartLink item={item} key={item.id} />)}</>;
 }
@@ -168,7 +188,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     <header className="siteHeader">
       <Link href="/" className="brandLockup" aria-label="Shift Left Coaching and Consulting home"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting" width={150} height={66} priority /><span className="brandWords"><strong>Shift Left</strong><small>COACHING &amp; CONSULTING</small><em>{tagline}</em></span></Link>
-      <nav aria-label="Main navigation"><HeaderNavigation items={headerItems} user={user} isAdmin={isAdmin} />{user ? <form className="headerAuth" action="/auth/signout" method="post"><button type="submit" className="authNavButton" title={user.email || "Signed in"}>Logout</button></form> : <Link href="/login">Login</Link>}</nav>
+      <div className="headerNavStack">
+        <nav aria-label="Main navigation"><HeaderNavigation items={headerItems} user={user} isAdmin={isAdmin} />{user ? <form className="headerAuth" action="/auth/signout" method="post"><button type="submit" className="authNavButton" title={user.email || "Signed in"}>Logout</button></form> : <Link href="/login">Login</Link>}</nav>
+        <HeaderSubNavigation items={headerItems} user={user} isAdmin={isAdmin} />
+      </div>
     </header>
     {children}
     <footer><div className="footerBrand"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting" width={190} height={84} /><strong>SHIFT LEFT COACHING &amp; CONSULTING</strong><p>{tagline}</p><p className="finePrint">{onlineMessage}</p></div><div><strong>Discover</strong><FooterNavigation items={discoverItems} user={user} isAdmin={isAdmin} /></div><div><strong>Explore</strong><FooterNavigation items={exploreItems} user={user} isAdmin={isAdmin} /></div><div><strong>Connect</strong>{user ? <form action="/auth/signout" method="post"><button className="footerAuthButton" type="submit">Logout</button></form> : <Link href="/login">Member login</Link>}<Link href="/book">Start your journey</Link><a href={`mailto:${contactEmail}`}>{contactEmail}</a><p>© 2026 Experience Healing LLC</p><p className="finePrint">Coaching and educational content do not replace licensed medical or psychological care.</p></div></footer>
