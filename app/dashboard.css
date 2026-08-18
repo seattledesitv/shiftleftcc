@@ -1,3 +1,4 @@
+@import "./navigation-v2.css";
 .dashboardHero{background:radial-gradient(circle at 86% 16%,rgba(24,143,208,.16),transparent 30%),linear-gradient(135deg,#fffaf3,#eef8f3)}
 .memberDashboard{padding:clamp(44px,5vw,76px) clamp(22px,6vw,92px);background:#f8fbfa}
 .dashboardGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:1250px;margin:0 auto}
