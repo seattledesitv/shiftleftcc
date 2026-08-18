@@ -159,13 +159,14 @@ function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { 
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
-    if (children.length) return <details name="main-navigation" className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
-      <summary className={item.is_cta ? "navCta" : undefined}><span>{item.label}</span><span className="navChevron" aria-hidden="true">⌄</span></summary>
+    if (children.length) return <div className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
+      <SmartLink item={item} className={`navParentLink${item.is_cta ? " navCta" : ""}`}>
+        <span>{item.label}</span><span className="navChevron" aria-hidden="true">⌄</span>
+      </SmartLink>
       <div className="navDropdownMenu">
-        <SmartLink item={item} className="navDropdownOverview">Overview</SmartLink>
         {children.map(child => <SmartLink item={child} key={child.id} className={child.is_cta ? "navCta" : undefined} />)}
       </div>
-    </details>;
+    </div>;
     return <SmartLink item={item} key={item.id} className={item.is_cta ? "navCta" : undefined} />;
   })}</>;
 }
