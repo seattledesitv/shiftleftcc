@@ -53,14 +53,6 @@ const fallbackHeader: NavItem[] = [
   { id: "journey", location: "header", label: "My Journey", href: "/my-journey", parent_id: null, display_order: 80, is_visible: true, is_cta: false, auth_visibility: "authenticated", open_new_tab: false },
   { id: "studio", location: "header", label: "Studio", href: "/studio", parent_id: null, display_order: 90, is_visible: true, is_cta: false, auth_visibility: "admin", open_new_tab: false },
   { id: "start", location: "header", label: "Start Your Journey", href: "/book", parent_id: null, display_order: 100, is_visible: true, is_cta: true, auth_visibility: "public", open_new_tab: false },
-  { id: "services-programs", location: "header", label: "Coaching Programs", href: "/programs", parent_id: "services", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "services-consulting", location: "header", label: "Consulting", href: "/consulting", parent_id: "services", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "services-speaking", location: "header", label: "Speaking & Workshops", href: "/speaking", parent_id: "services", display_order: 30, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "services-assessment", location: "header", label: "Wellbeing Assessment", href: "/wellbeing-assessment", parent_id: "services", display_order: 40, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "resources-blog", location: "header", label: "Blog", href: "/blog", parent_id: "resources", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "resources-assess", location: "header", label: "Assessments", href: "/wellbeing-assessment", parent_id: "resources", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "about-journey", location: "header", label: "My Journey", href: "/my-story", parent_id: "about", display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
-  { id: "about-why", location: "header", label: "Why Work With Me", href: "/why-me", parent_id: "about", display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
 ];
 
 const fallbackDiscover: NavItem[] = [
@@ -98,8 +90,7 @@ function dedupeNavigation(items: NavItem[]) {
   return [...items]
     .sort((a, b) => a.display_order - b.display_order)
     .filter(item => {
-      if (item.parent_id) return true;
-      const key = `${item.location}:${normalizeHref(item.href)}`;
+      const key = `${item.location}:${item.parent_id || "root"}:${normalizeHref(item.href)}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -112,6 +103,50 @@ function ensureHeaderHome(items: NavItem[]) {
   return [fallbackHeader[0], ...items];
 }
 
+const defaultSubmenus: Record<string, Array<{ label: string; href: string }>> = {
+  "/programs": [
+    { label: "Coaching Programs", href: "/programs" },
+    { label: "Consulting", href: "/consulting" },
+    { label: "Speaking & Workshops", href: "/speaking" },
+    { label: "Wellbeing Assessment", href: "/wellbeing-assessment" },
+  ],
+  "/resources": [
+    { label: "Resource Hub", href: "/resources" },
+    { label: "Blog", href: "/blog" },
+    { label: "Assessments", href: "/wellbeing-assessment" },
+  ],
+  "/my-story": [
+    { label: "My Journey", href: "/my-story" },
+    { label: "Why Work With Me", href: "/why-me" },
+  ],
+};
+
+function ensureDefaultSubmenus(items: NavItem[]) {
+  const output = [...items];
+  const parents = output.filter(item => !item.parent_id && item.location === "header");
+  for (const parent of parents) {
+    const defaults = defaultSubmenus[normalizeHref(parent.href)];
+    if (!defaults) continue;
+    const existing = output.filter(item => item.parent_id === parent.id);
+    defaults.forEach((child, index) => {
+      if (existing.some(item => normalizeHref(item.href) === normalizeHref(child.href))) return;
+      output.push({
+        id: `virtual-${parent.id}-${index}`,
+        location: "header",
+        label: child.label,
+        href: child.href,
+        parent_id: parent.id,
+        display_order: (index + 1) * 10,
+        is_visible: true,
+        is_cta: false,
+        auth_visibility: "public",
+        open_new_tab: false,
+      });
+    });
+  }
+  return dedupeNavigation(output);
+}
+
 function SmartLink({ item, className, children }: { item: NavItem; className?: string; children?: React.ReactNode }) {
   const external = /^https?:\/\//i.test(item.href);
   if (external) return <a href={item.href} className={className} target={item.open_new_tab ? "_blank" : undefined} rel={item.open_new_tab ? "noopener noreferrer" : undefined}>{children || item.label}</a>;
@@ -119,28 +154,19 @@ function SmartLink({ item, className, children }: { item: NavItem; className?: s
 }
 
 function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  const allowed = dedupeNavigation(ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin)));
+  const allowed = ensureDefaultSubmenus(ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin)));
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
-    if (children.length) return <div className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
-      <SmartLink item={item} className={item.is_cta ? "navCta" : undefined}>{item.label} <span aria-hidden="true">⌄</span></SmartLink>
-      <div className="navDropdownMenu">{children.map(child => <SmartLink item={child} key={child.id} className={child.is_cta ? "navCta" : undefined} />)}</div>
-    </div>;
+    if (children.length) return <details className={`navDropdown${item.is_cta ? " navCtaDropdown" : ""}`} key={item.id}>
+      <summary className={item.is_cta ? "navCta" : undefined}><span>{item.label}</span><span className="navChevron" aria-hidden="true">⌄</span></summary>
+      <div className="navDropdownMenu">
+        <SmartLink item={item} className="navDropdownOverview">Overview</SmartLink>
+        {children.map(child => <SmartLink item={child} key={child.id} className={child.is_cta ? "navCta" : undefined} />)}
+      </div>
+    </details>;
     return <SmartLink item={item} key={item.id} className={item.is_cta ? "navCta" : undefined} />;
   })}</>;
-}
-
-function HeaderSubNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  const allowed = ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin));
-  const children = allowed.filter(item => item.parent_id).sort((a, b) => a.display_order - b.display_order);
-  if (!children.length) return null;
-  return <div className="headerSubnav" aria-label="Secondary navigation">
-    {children.map(child => {
-      const parent = allowed.find(item => item.id === child.parent_id);
-      return <SmartLink item={child} key={child.id}><span className="subnavParent">{parent?.label}</span><span className="subnavLabel">{child.label}</span></SmartLink>;
-    })}
-  </div>;
 }
 
 function FooterNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
@@ -190,7 +216,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <Link href="/" className="brandLockup" aria-label="Shift Left Coaching and Consulting home"><Image src="/shift-left-logo.svg" alt="Shift Left Coaching and Consulting" width={150} height={66} priority /><span className="brandWords"><strong>Shift Left</strong><small>COACHING &amp; CONSULTING</small><em>{tagline}</em></span></Link>
       <div className="headerNavStack">
         <nav aria-label="Main navigation"><HeaderNavigation items={headerItems} user={user} isAdmin={isAdmin} />{user ? <form className="headerAuth" action="/auth/signout" method="post"><button type="submit" className="authNavButton" title={user.email || "Signed in"}>Logout</button></form> : <Link href="/login">Login</Link>}</nav>
-        <HeaderSubNavigation items={headerItems} user={user} isAdmin={isAdmin} />
       </div>
     </header>
     {children}
