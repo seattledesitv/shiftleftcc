@@ -77,6 +77,27 @@ function isAllowed(item: NavItem, user: { id: string } | null, isAdmin: boolean)
   return true;
 }
 
+function normalizeHref(href: string) {
+  const value = href.trim();
+  if (!value) return value;
+  if (/^https?:\/\//i.test(value)) return value.replace(/\/$/, "").toLowerCase();
+  if (value === "/") return "/";
+  return (`/${value.replace(/^\/+|\/+$/g, "")}`).toLowerCase();
+}
+
+function dedupeNavigation(items: NavItem[]) {
+  const seen = new Set<string>();
+  return [...items]
+    .sort((a, b) => a.display_order - b.display_order)
+    .filter(item => {
+      if (item.parent_id) return true;
+      const key = `${item.location}:${normalizeHref(item.href)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
 function SmartLink({ item, className, children }: { item: NavItem; className?: string; children?: React.ReactNode }) {
   const external = /^https?:\/\//i.test(item.href);
   if (external) return <a href={item.href} className={className} target={item.open_new_tab ? "_blank" : undefined} rel={item.open_new_tab ? "noopener noreferrer" : undefined}>{children || item.label}</a>;
@@ -84,7 +105,7 @@ function SmartLink({ item, className, children }: { item: NavItem; className?: s
 }
 
 function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  const allowed = items.filter(item => isAllowed(item, user, isAdmin));
+  const allowed = dedupeNavigation(items.filter(item => isAllowed(item, user, isAdmin)));
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
@@ -97,7 +118,7 @@ function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { 
 }
 
 function FooterNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  return <>{items.filter(item => !item.parent_id && isAllowed(item, user, isAdmin)).sort((a,b) => a.display_order - b.display_order).map(item => <SmartLink item={item} key={item.id} />)}</>;
+  return <>{dedupeNavigation(items.filter(item => !item.parent_id && isAllowed(item, user, isAdmin))).map(item => <SmartLink item={item} key={item.id} />)}</>;
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
