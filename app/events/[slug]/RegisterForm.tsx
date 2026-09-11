@@ -10,6 +10,7 @@ export default function RegisterForm({ eventId, ticketTypes }: { eventId:string;
   const [name,setName] = useState("");
   const [email,setEmail] = useState("");
   const [phone,setPhone] = useState("");
+  const [discountCode,setDiscountCode] = useState("");
   const [busy,setBusy] = useState(false);
   const [message,setMessage] = useState("");
   const selected = useMemo(()=>ticketTypes.find(t=>t.id===ticketTypeId),[ticketTypes,ticketTypeId]);
@@ -17,12 +18,12 @@ export default function RegisterForm({ eventId, ticketTypes }: { eventId:string;
   async function submit(e:React.FormEvent) {
     e.preventDefault(); setBusy(true); setMessage("");
     try {
-      const res = await fetch("/api/events/register",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({eventId,ticketTypeId,quantity,name,email,phone})});
+      const res = await fetch("/api/events/register",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({eventId,ticketTypeId,quantity,name,email,phone,discountCode:discountCode.trim()})});
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed.");
       if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
       setMessage(`Registration confirmed. Ticket reference: ${data.ticketCodes?.join(", ") || data.orderId}`);
-      setName(""); setPhone(""); setQuantity(1);
+      setName(""); setPhone(""); setQuantity(1); setDiscountCode("");
     } catch(err) { setMessage(err instanceof Error ? err.message : "Registration failed."); }
     finally { setBusy(false); }
   }
@@ -35,6 +36,7 @@ export default function RegisterForm({ eventId, ticketTypes }: { eventId:string;
     <label>Name<input required value={name} onChange={e=>setName(e.target.value)} /></label>
     <label>Email<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} /></label>
     <label>Phone <span style={{fontWeight:400}}>(optional)</span><input value={phone} onChange={e=>setPhone(e.target.value)} /></label>
+    <label>Discount code <span style={{fontWeight:400}}>(optional)</span><input value={discountCode} onChange={e=>setDiscountCode(e.target.value.toUpperCase())} placeholder="Enter code" /></label>
     {selected?.description && <p>{selected.description}</p>}
     <button className="button" disabled={busy}>{busy ? "Processing…" : selected?.price_amount ? "Continue to secure payment" : "Register free"}</button>
     {message && <p role="status">{message}</p>}
