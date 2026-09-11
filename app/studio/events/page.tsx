@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../lib/supabase/server";
+import CloudinaryImageUpload from "./CloudinaryImageUpload";
 import "../../dashboard.css";
 
 async function requireAdmin() {
@@ -12,18 +13,6 @@ async function requireAdmin() {
   return { supabase, user };
 }
 
-async function uploadEventImage(supabase: Awaited<ReturnType<typeof createClient>>, file: File, slug: string) {
-  if (!file || file.size === 0) return null;
-  if (!file.type.startsWith("image/")) throw new Error("Please upload an image file.");
-  if (file.size > 5 * 1024 * 1024) throw new Error("Event image must be 5 MB or smaller.");
-  const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-  const path = `${slug}/${crypto.randomUUID()}.${extension}`;
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const { error } = await supabase.storage.from("event-images").upload(path, bytes, { contentType: file.type, upsert: false });
-  if (error) throw new Error(error.message);
-  return supabase.storage.from("event-images").getPublicUrl(path).data.publicUrl;
-}
-
 async function createEvent(formData: FormData) {
   "use server";
   const { supabase, user } = await requireAdmin();
@@ -32,16 +21,12 @@ async function createEvent(formData: FormData) {
   const startsAt = String(formData.get("starts_at") || "");
   if (!title || !slug || !startsAt) return;
 
-  const imageFile = formData.get("event_image") as File | null;
-  const uploadedImageUrl = imageFile?.size ? await uploadEventImage(supabase, imageFile, slug) : null;
-  const manualImageUrl = String(formData.get("image_url") || "").trim() || null;
-
   const { data: event, error } = await supabase.from("events").insert({
     title,
     slug,
     subtitle: String(formData.get("subtitle") || "").trim() || null,
     description: String(formData.get("description") || "").trim() || null,
-    image_url: uploadedImageUrl || manualImageUrl,
+    image_url: String(formData.get("image_url") || "").trim() || null,
     event_type: String(formData.get("event_type") || "in_person"),
     venue_name: String(formData.get("venue_name") || "").trim() || null,
     venue_address: String(formData.get("venue_address") || "").trim() || null,
@@ -53,7 +38,9 @@ async function createEvent(formData: FormData) {
     status: String(formData.get("status") || "draft"),
     created_by: user.id,
   }).select("id").single();
-  if (!error && event) redirect(`/studio/events/${event.id}`);
+
+  if (error) throw new Error(`Could not create event: ${error.message}`);
+  if (event) redirect(`/studio/events/${event.id}`);
 }
 
 export default async function StudioEventsPage() {
@@ -71,8 +58,7 @@ export default async function StudioEventsPage() {
               <label>Event title<input name="title" required placeholder="Shift Left Leadership Workshop" /></label>
               <label>URL slug<input name="slug" required placeholder="leadership-workshop" /></label>
               <label>Subtitle<input name="subtitle" placeholder="A practical online workshop" /></label>
-              <label>Event image<input name="event_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>JPG, PNG, WEBP or GIF · max 5 MB</small></label>
-              <label>Or image URL<input name="image_url" placeholder="https://..." /></label>
+              <CloudinaryImageUpload />
               <label>Event type<select name="event_type" defaultValue="in_person"><option value="in_person">In person</option><option value="online">Online</option><option value="hybrid">Hybrid</option></select></label>
               <label>Status<select name="status" defaultValue="draft"><option value="draft">Draft</option><option value="published">Published</option></select></label>
               <label>Starts<input name="starts_at" type="datetime-local" required /></label>
