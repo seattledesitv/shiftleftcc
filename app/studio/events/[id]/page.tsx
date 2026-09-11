@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "../../../../lib/supabase/server";
+import CloudinaryImageUpload from "../CloudinaryImageUpload";
 import "../../../dashboard.css";
 
 async function requireAdmin(next: string) {
@@ -13,18 +14,6 @@ async function requireAdmin(next: string) {
   return supabase;
 }
 
-async function uploadEventImage(supabase: Awaited<ReturnType<typeof createClient>>, file: File, slug: string) {
-  if (!file || file.size === 0) return null;
-  if (!file.type.startsWith("image/")) throw new Error("Please upload an image file.");
-  if (file.size > 5 * 1024 * 1024) throw new Error("Event image must be 5 MB or smaller.");
-  const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-  const path = `${slug}/${crypto.randomUUID()}.${extension}`;
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const { error } = await supabase.storage.from("event-images").upload(path, bytes, { contentType: file.type, upsert: false });
-  if (error) throw new Error(error.message);
-  return supabase.storage.from("event-images").getPublicUrl(path).data.publicUrl;
-}
-
 export default async function StudioEventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await requireAdmin(`/studio/events/${id}`);
@@ -32,14 +21,9 @@ export default async function StudioEventPage({ params }: { params: Promise<{ id
   async function updateEvent(formData: FormData) {
     "use server";
     const db = await requireAdmin(`/studio/events/${id}`);
-    const { data: current } = await db.from("events").select("slug,image_url").eq("id", id).maybeSingle();
-    const imageFile = formData.get("event_image") as File | null;
-    const uploadedImageUrl = imageFile?.size ? await uploadEventImage(db, imageFile, current?.slug || id) : null;
-    const manualImageUrl = String(formData.get("image_url") || "").trim();
-    const removeImage = formData.get("remove_image") === "on";
-    const imageUrl = removeImage ? null : (uploadedImageUrl || manualImageUrl || current?.image_url || null);
+    const imageUrl = String(formData.get("image_url") || "").trim() || null;
 
-    await db.from("events").update({
+    const { error } = await db.from("events").update({
       title: String(formData.get("title") || "").trim(),
       subtitle: String(formData.get("subtitle") || "").trim() || null,
       description: String(formData.get("description") || "").trim() || null,
@@ -57,6 +41,7 @@ export default async function StudioEventPage({ params }: { params: Promise<{ id
       status: String(formData.get("status") || "draft"),
       confirmation_message: String(formData.get("confirmation_message") || "").trim() || null,
     }).eq("id", id);
+    if (error) throw new Error(`Could not save event: ${error.message}`);
     revalidatePath(`/studio/events/${id}`); revalidatePath("/events");
   }
 
@@ -105,7 +90,7 @@ export default async function StudioEventPage({ params }: { params: Promise<{ id
         <article className="dashboardCard"><p className="eyebrow">REVENUE</p><div className="dashboardScore">${(paid/100).toFixed(2)}</div><h2>Paid revenue</h2></article>
       </div>
 
-      <article className="dashboardCard" style={{marginTop:24}}><h2>Event details</h2>{event.image_url && <img src={event.image_url} alt={`${event.title} event`} style={{width:"100%",maxWidth:720,aspectRatio:"16/9",objectFit:"cover",borderRadius:18,margin:"8px 0 20px"}} />}<form action={updateEvent} className="settingsForm"><div className="settingsGrid">
+      <article className="dashboardCard" style={{marginTop:24}}><h2>Event details</h2><form action={updateEvent} className="settingsForm"><div className="settingsGrid">
         <label>Title<input name="title" defaultValue={event.title} required /></label>
         <label>Subtitle<input name="subtitle" defaultValue={event.subtitle || ""} /></label>
         <label>Status<select name="status" defaultValue={event.status}><option value="draft">Draft</option><option value="published">Published</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
@@ -119,9 +104,7 @@ export default async function StudioEventPage({ params }: { params: Promise<{ id
         <label>Venue<input name="venue_name" defaultValue={event.venue_name || ""} /></label>
         <label>Venue address<input name="venue_address" defaultValue={event.venue_address || ""} /></label>
         <label>Online URL<input name="online_url" defaultValue={event.online_url || ""} /></label>
-        <label>Upload / replace event image<input name="event_image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /><small>JPG, PNG, WEBP or GIF · max 5 MB</small></label>
-        <label>Or image URL<input name="image_url" defaultValue={event.image_url || ""} /></label>
-        <label style={{display:"flex",alignItems:"center",gap:8}}>Remove current image<input name="remove_image" type="checkbox" /></label>
+        <CloudinaryImageUpload initialUrl={event.image_url || ""} label="Upload / replace event image" />
       </div><label>Description<textarea name="description" rows={5} defaultValue={event.description || ""} /></label><label>Confirmation message<textarea name="confirmation_message" rows={3} defaultValue={event.confirmation_message || ""} /></label><button className="button">Save event</button></form></article>
 
       <article className="dashboardCard" style={{marginTop:24}}><h2>Ticket types</h2><p>Add free tickets with price $0 or paid tickets with any price.</p><form action={addTicketType} className="settingsForm"><div className="settingsGrid">
