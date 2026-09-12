@@ -7,7 +7,10 @@ export default async function EventsPage() {
   return <main>
     <section className="pageHero"><p className="eyebrow">SHIFT LEFT EVENTS</p><h1>Learn, connect and grow.</h1><p className="lead">Workshops, conversations and community experiences from Shift Left Coaching &amp; Consulting.</p></section>
     <section className="contentSection"><div className="cardGrid">
-      {(events || []).map(event => <article className="contentCard" key={event.id}>{event.image_url ? <img src={event.image_url} alt="" style={{width:"100%",borderRadius:18,aspectRatio:"16/9",objectFit:"cover"}}/> : null}<p className="eyebrow">{new Date(event.starts_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}</p><h2>{event.title}</h2>{event.subtitle && <p>{event.subtitle}</p>}<p>{new Date(event.starts_at).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})} · {event.event_type === "online" ? "Online" : event.venue_name || event.event_type.replace("_"," ")}</p><Link className="button" href={`/events/${event.slug}`}>View event &amp; tickets</Link></article>)}
+      {(events || []).map(event => <article className="contentCard" key={event.id} style={{display:"grid",gridTemplateColumns:event.image_url?"180px minmax(0,1fr)":"1fr",gap:20,alignItems:"center"}}>
+        {event.image_url ? <img src={event.image_url} alt={`${event.title} event`} style={{width:180,height:120,borderRadius:16,objectFit:"cover",objectPosition:"center"}}/> : null}
+        <div><p className="eyebrow">{new Date(event.starts_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}</p><h2>{event.title}</h2>{event.subtitle && <p>{event.subtitle}</p>}<p>{new Date(event.starts_at).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})} · {event.event_type === "online" ? "Online" : event.venue_name || event.event_type.replace("_"," ")}</p><Link className="button" href={`/events/${event.slug}`}>View event &amp; tickets</Link></div>
+      </article>)}
       {!events?.length && <article className="contentCard"><h2>No upcoming events yet.</h2><p>Please check back soon.</p></article>}
     </div></section>
   </main>;
