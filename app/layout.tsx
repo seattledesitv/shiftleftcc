@@ -49,6 +49,7 @@ const fallbackHeader: NavItem[] = [
   { id: "services", location: "header", label: "Coaching & Services", href: "/programs", parent_id: null, display_order: 30, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "organizations", location: "header", label: "Organizations", href: "/organizations", parent_id: null, display_order: 40, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "books", location: "header", label: "Books", href: "/books", parent_id: null, display_order: 50, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "events", location: "header", label: "Events", href: "/events", parent_id: null, display_order: 55, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "resources", location: "header", label: "Resources", href: "/resources", parent_id: null, display_order: 60, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "about", location: "header", label: "About Bharath", href: "/my-story", parent_id: null, display_order: 70, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "journey", location: "header", label: "My Journey", href: "/my-journey", parent_id: null, display_order: 80, is_visible: true, is_cta: false, auth_visibility: "authenticated", open_new_tab: false },
@@ -67,6 +68,7 @@ const fallbackExplore: NavItem[] = [
   { id: "fe1", location: "footer_explore", label: "Coaching & Services", href: "/programs", parent_id: null, display_order: 10, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "fe2", location: "footer_explore", label: "Organizations", href: "/organizations", parent_id: null, display_order: 20, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "fe3", location: "footer_explore", label: "Books", href: "/books", parent_id: null, display_order: 30, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
+  { id: "fe-events", location: "footer_explore", label: "Events", href: "/events", parent_id: null, display_order: 35, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "fe4", location: "footer_explore", label: "Resources", href: "/resources", parent_id: null, display_order: 40, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
   { id: "fe5", location: "footer_explore", label: "Blog", href: "/blog", parent_id: null, display_order: 50, is_visible: true, is_cta: false, auth_visibility: "public", open_new_tab: false },
 ];
@@ -102,6 +104,13 @@ function ensureHeaderHome(items: NavItem[]) {
   const hasHome = items.some(item => !item.parent_id && item.is_visible && normalizeHref(item.href) === "/");
   if (hasHome) return items;
   return [fallbackHeader[0], ...items];
+}
+
+function ensureHeaderEvents(items: NavItem[]) {
+  const hasEvents = items.some(item => !item.parent_id && item.is_visible && normalizeHref(item.href) === "/events");
+  if (hasEvents) return items;
+  const eventsItem = fallbackHeader.find(item => item.id === "events");
+  return eventsItem ? [...items, eventsItem] : items;
 }
 
 const defaultSubmenus: Record<string, Array<{ label: string; href: string }>> = {
@@ -155,7 +164,7 @@ function SmartLink({ item, className, children }: { item: NavItem; className?: s
 }
 
 function HeaderNavigation({ items, user, isAdmin }: { items: NavItem[]; user: { id: string } | null; isAdmin: boolean }) {
-  const allowed = ensureDefaultSubmenus(ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin)));
+  const allowed = ensureDefaultSubmenus(ensureHeaderEvents(ensureHeaderHome(items).filter(item => isAllowed(item, user, isAdmin))));
   const topLevel = allowed.filter(item => !item.parent_id).sort((a, b) => a.display_order - b.display_order);
   return <>{topLevel.map(item => {
     const children = allowed.filter(child => child.parent_id === item.id).sort((a, b) => a.display_order - b.display_order);
