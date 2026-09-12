@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 type TicketType = { id:string; name:string; description:string|null; price_amount:number; quantity_available:number|null; max_per_order:number };
 
-export default function RegisterForm({ eventId, ticketTypes }: { eventId:string; ticketTypes:TicketType[] }) {
+export default function RegisterForm({ eventId, ticketTypes, isAuthenticated }: { eventId:string; ticketTypes:TicketType[]; isAuthenticated:boolean }) {
   const [ticketTypeId,setTicketTypeId] = useState(ticketTypes[0]?.id || "");
   const [quantity,setQuantity] = useState(1);
   const [name,setName] = useState("");
@@ -13,16 +14,18 @@ export default function RegisterForm({ eventId, ticketTypes }: { eventId:string;
   const [discountCode,setDiscountCode] = useState("");
   const [busy,setBusy] = useState(false);
   const [message,setMessage] = useState("");
+  const [confirmed,setConfirmed] = useState(false);
   const selected = useMemo(()=>ticketTypes.find(t=>t.id===ticketTypeId),[ticketTypes,ticketTypeId]);
 
   async function submit(e:React.FormEvent) {
-    e.preventDefault(); setBusy(true); setMessage("");
+    e.preventDefault(); setBusy(true); setMessage(""); setConfirmed(false);
     try {
       const res = await fetch("/api/events/register",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({eventId,ticketTypeId,quantity,name,email,phone,discountCode:discountCode.trim()})});
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed.");
       if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
-      setMessage(`Registration confirmed. Ticket reference: ${data.ticketCodes?.join(", ") || data.orderId}`);
+      setConfirmed(true);
+      setMessage(isAuthenticated ? "Thank you. Your registration is confirmed. Your ticket has been emailed to you and is also available in My Tickets." : "Thank you. Your registration is confirmed. Your ticket has been sent to the email address you provided.");
       setName(""); setPhone(""); setQuantity(1); setDiscountCode("");
     } catch(err) { setMessage(err instanceof Error ? err.message : "Registration failed."); }
     finally { setBusy(false); }
@@ -39,6 +42,6 @@ export default function RegisterForm({ eventId, ticketTypes }: { eventId:string;
     <label>Discount code <span style={{fontWeight:400}}>(optional)</span><input value={discountCode} onChange={e=>setDiscountCode(e.target.value.toUpperCase())} placeholder="Enter code" /></label>
     {selected?.description && <p>{selected.description}</p>}
     <button className="button" disabled={busy}>{busy ? "Processing…" : selected?.price_amount ? "Continue to secure payment" : "Register free"}</button>
-    {message && <p role="status">{message}</p>}
+    {message && <div role="status" style={{padding:14,borderRadius:14,background:confirmed?"rgba(47,143,45,.08)":"rgba(180,50,50,.06)"}}><p style={{margin:0}}>{message}</p>{confirmed && isAuthenticated && <p style={{margin:"10px 0 0"}}><Link href="/my-tickets"><strong>View My Tickets →</strong></Link></p>}</div>}
   </form>;
 }
